@@ -9,21 +9,21 @@
   :root {
     --bg: #ffffff; --fg: #1b1f24; --muted: #57606a; --card: #f6f8fa;
     --border: #d0d7de; --accent: #0079a8; --accent-fg: #ffffff;
-    --protocol: #0079a8; --policy: #6f42c1;
+    --protocol: #0079a8; --factor: #1a7f37; --policy: #6f42c1;
   }
   /* System mode (no explicit choice) follows the OS preference. */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
       --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
       --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
-      --protocol: #22cce2; --policy: #a371f7;
+      --protocol: #22cce2; --factor: #3fb950; --policy: #a371f7;
     }
   }
   /* Forced dark (manual toggle). */
   :root[data-theme="dark"] {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
     --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
-    --protocol: #22cce2; --policy: #a371f7;
+    --protocol: #22cce2; --factor: #3fb950; --policy: #a371f7;
   }
   .theme-toggle {
     position: fixed; top: 14px; right: 14px; z-index: 10;
@@ -66,6 +66,7 @@
   .card .badges img { height: 20px; vertical-align: middle; }
   .kind { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
   .kind.protocol { color: var(--protocol); }
+  .kind.factor { color: var(--factor); }
   .kind.policy { color: var(--policy); }
   .card h3 .tags { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
   .type { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
