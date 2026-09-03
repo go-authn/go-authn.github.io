@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Site.Title }} — authentication factors in pure Go</title>
+<meta name="description" content="Authentication factors in pure Go: the FIDO client-to-authenticator protocol over any transport, and a policy that counts factors by KIND rather than by number. CGO_ENABLED=0, 100% coverage, verified against a real security key.">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1b1f24; --muted: #57606a; --card: #f6f8fa;
+    --border: #d0d7de; --accent: #0079a8; --accent-fg: #ffffff;
+    --protocol: #0079a8; --policy: #6f42c1;
+  }
+  /* System mode (no explicit choice) follows the OS preference. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
+      --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
+      --protocol: #22cce2; --policy: #a371f7;
+    }
+  }
+  /* Forced dark (manual toggle). */
+  :root[data-theme="dark"] {
+    --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
+    --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
+    --protocol: #22cce2; --policy: #a371f7;
+  }
+  .theme-toggle {
+    position: fixed; top: 14px; right: 14px; z-index: 10;
+    font: inherit; font-size: .8rem; cursor: pointer; padding: 6px 12px;
+    color: var(--fg); background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 72px 0 32px; text-align: center; }
+  .logo { width: 88px; height: 88px; margin: 0 auto 18px; display: block; }
+  h1 { font-size: 2.6rem; margin: 0 0 .3em; letter-spacing: -.02em; }
+  .tagline { font-size: 1.2rem; color: var(--muted); margin: 0 auto; max-width: 680px; }
+  .pills { margin: 22px 0 0; }
+  .pill {
+    display: inline-block; margin: 4px; padding: 3px 10px; font-size: .82rem;
+    color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .cta { margin: 30px 0 0; }
+  .btn {
+    display: inline-block; padding: 10px 18px; margin: 4px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; border: 1px solid var(--border);
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .btn.ghost { color: var(--fg); background: transparent; }
+  .lead { color: var(--fg); max-width: 800px; margin: 8px auto 0; text-align: center; }
+  .lead code { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+  h2.section { text-align: center; margin: 40px 0 4px; font-size: 1.4rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 16px 0 8px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; }
+  .card h3 { margin: 0 0 .35em; font-size: 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .card h3 a { text-decoration: none; }
+  .card .ver { color: var(--muted); font-size: .85rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0 0 .6em; }
+  .card p { margin: 0 0 .8em; color: var(--fg); font-size: .95rem; }
+  .card p code { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+  .card .badges { margin-top: auto; }
+  .card .badges img { height: 20px; vertical-align: middle; }
+  .kind { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+  .kind.protocol { color: var(--protocol); }
+  .kind.policy { color: var(--policy); }
+  .card h3 .tags { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .type { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+  .type.lib { color: var(--accent); border-color: var(--accent); }
+  .type.tool { color: var(--accent-fg); background: var(--accent); border-color: var(--accent); }
+  .principles { color: var(--muted); text-align: center; padding: 10px 0 0; max-width: 820px; margin: 0 auto; }
+  footer { color: var(--muted); text-align: center; padding: 40px 0 56px; font-size: .9rem; }
+  a { color: var(--accent); }
+</style>
+<script>
+  // Set the saved theme before paint to avoid a flash; "system" leaves no attribute.
+  (function(){var m=localStorage.getItem('theme');if(m&&m!=='system')document.documentElement.setAttribute('data-theme',m);})();
+</script>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light, dark or system theme"><span id="theme-label">🖥️ System</span></button>
+  <header class="wrap">
+    <img class="logo" src="/img/logo.svg" alt="go-authn logo" width="88" height="88">
+    <h1>go-authn</h1>
+    <p class="tagline">Authentication <strong>factors</strong> in pure Go — a security key, a
+      fingerprint, and a policy that knows <strong>the difference between two checks and two
+      factors</strong>.</p>
+    <div class="pills">
+      <span class="pill">CGO_ENABLED=0</span>
+      <span class="pill">transport-pluggable</span>
+      <span class="pill">CTAPHID · CTAP2 · COSE</span>
+      <span class="pill">knowledge · possession · inherence</span>
+      <span class="pill">verified against a real security key</span>
+      <span class="pill">100% coverage</span>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/go-authn/.github/blob/main/profile/README.md">Documentation</a>
+      <a class="btn ghost" href="https://github.com/go-authn">GitHub</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="lead">The phrase is multi-<strong>factor</strong>, not multi-check. A passphrase and a
+      recovery code are both things you <em>know</em>: whoever learned one has usually learned the
+      other from the same place, and requiring both buys far less than the count suggests. So the
+      classification is the point &mdash; <code>Policy{Count: 2, DistinctKinds: true}</code> is what
+      <em>two-factor</em> is normally taken to mean, and two passphrases never satisfy it.</p>
+
+    <p class="lead"><strong>Nothing here is platform-specific.</strong> A <code>Transport</code> moves
+      64-byte reports to and from an authenticator, and where those come from &mdash; IOKit on macOS,
+      hidraw on Linux, WebHID in a browser &mdash; is somebody else's problem. The macOS one is
+      <a href="https://github.com/go-macos/fido">go-macos/fido</a>: four calls to IOKit, no framework,
+      no driver, no cgo. A FIDO key opens with no entitlement and no user consent, which is what makes
+      the whole path reachable from Go at all.</p>
+
+    <p class="lead"><strong>The reference was read first, and it earned its keep.</strong> In pure Go,
+      client-side, there was nothing to reuse: the reference of the field is Yubico's
+      <a href="https://github.com/Yubico/libfido2">libfido2</a>, written in C, whose one serious Go
+      binding goes through cgo. So libfido2 and the CTAP specification are read here as
+      <em>documentation</em>. That reading caught two faults a key would never have shown, because a
+      short ping comes back the same either way: <code>CTAPHID_KEEPALIVE</code> is not an answer, and
+      the message limit is the framing's rather than the length field's. CBOR, by contrast, <em>does</em>
+      have a Go reference &mdash; <a href="https://github.com/fxamacker/cbor">fxamacker/cbor</a> &mdash;
+      so it is used rather than rewritten.</p>
+
+    <h2 class="section">Repositories</h2>
+    <section class="grid">
+      {{ range .Site.Params.repos }}
+      <article class="card">
+        <h3>
+          <a href="https://github.com/go-authn/{{ .name }}"><code>{{ .name }}</code></a>
+          <span class="tags"><span class="type {{ .type }}">{{ .type }}</span><span class="kind {{ if eq .kind "3d" }}id3d{{ else }}{{ .kind }}{{ end }}">{{ .kind }}</span></span>
+        </h3>
+        <p class="ver">{{ .version }}</p>
+        <p>{{ .blurb | markdownify }}</p>
+        <div class="badges">
+          {{ if .ci }}<a href="https://github.com/go-authn/{{ .name }}/actions/workflows/ci.yml"><img src="https://github.com/go-authn/{{ .name }}/actions/workflows/ci.yml/badge.svg" alt="CI"></a>{{ end }}
+          <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage 100%">
+        </div>
+      </article>
+      {{ end }}
+    </section>
+    <p class="principles">Every factor answers one question &mdash; <em>is this person here, now?</em>
+      &mdash; and the policy counts the answers by KIND, because two of the same thing is one factor.
+      Pure Go with <code>CGO_ENABLED=0</code>, held at 100% statement coverage and gated in CI on
+      Linux, macOS and Windows. The protocol is proven against a real security key: registered,
+      asserted, and the signature verified with the public key the key itself handed out &mdash; which
+      is what proves the parsing rather than asserting it, since a COSE key could not verify anything
+      if its extent were wrong by a byte. BSD-3-Clause throughout. First consumer:
+      <a href="https://github.com/go-macos/fido">go-macos/fido</a>.</p>
+  </main>
+
+  <footer class="wrap">
+    BSD-3-Clause · <a href="https://github.com/go-authn">github.com/go-authn</a>
+  </footer>
+  <script>
+  (function(){
+    var order=['system','light','dark'], root=document.documentElement;
+    var labels={system:'🖥️ System',light:'☀️ Light',dark:'🌙 Dark'};
+    function apply(m){ if(m==='system'){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme',m);} localStorage.setItem('theme',m); var el=document.getElementById('theme-label'); if(el)el.textContent=labels[m]; }
+    var mode=localStorage.getItem('theme')||'system'; apply(mode);
+    var btn=document.getElementById('theme-toggle');
+    if(btn) btn.addEventListener('click',function(){ mode=order[(order.indexOf(mode)+1)%order.length]; apply(mode); });
+  })();
+  </script>
+</body>
+</html>

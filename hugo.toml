@@ -1,0 +1,27 @@
+baseURL = "https://go-authn.github.io/"
+title = "go-authn"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+# Each repo card.
+# "kind"  = which slice: protocol / policy.
+# "type"  = lib (importable module) vs tool.
+# "ci"    = true only where a GitHub Actions ci.yml actually exists, so the CI
+#           badge never renders an empty "no status" -- honest badges only.
+# "blurb" = drawn straight from each repo's README.
+[[params.repos]]
+  name = "fido"
+  kind = "protocol"
+  type = "lib"
+  version = "v0.4.0"
+  ci = true
+  blurb = "The FIDO client-to-authenticator protocol over any transport: CTAPHID framing, the handshake, `GetInfo`, `MakeCredential`, `GetAssertion`, and the authenticator data parsed down to a `*ecdsa.PublicKey`."
+[[params.repos]]
+  name = "mfa"
+  kind = "policy"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  blurb = "How many factors, of which kinds, and what to say when some refuse. A factor that could not be asked has not failed; a factor not reached is not reported as failed; and there is no default policy."
