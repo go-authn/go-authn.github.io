@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # The deploy workflow only runs on a push to main, so until now a pull
+  # request that broke the template was merged first and discovered second.
+  # This builds the same site with the same Hugo, and nothing else.
+  build:
+    name: the site builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.162.1"
+          extended: true
+      - name: Build
+        run: hugo --minify --baseURL "https://go-authn.github.io/"
+      - name: There is a page, and it names the repos
+        run: |
+          test -s public/index.html || { echo "::error::no index.html was produced"; exit 1; }
+          for repo in fido mfa keyfactor; do
+            grep -q "go-authn/$repo" public/index.html \
+              || { echo "::error::the page does not mention $repo"; exit 1; }
+          done

@@ -6,7 +6,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   unsafe = true
 
 # Each repo card.
-# "kind"  = which slice: protocol / policy.
+# "kind"  = which slice: protocol / factor / policy.
 # "type"  = lib (importable module) vs tool.
 # "ci"    = true only where a GitHub Actions ci.yml actually exists, so the CI
 #           badge never renders an empty "no status" -- honest badges only.
@@ -15,7 +15,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "fido"
   kind = "protocol"
   type = "lib"
-  version = "v0.4.0"
+  version = "v0.5.0"
   ci = true
   blurb = "The FIDO client-to-authenticator protocol over any transport: CTAPHID framing, the handshake, `GetInfo`, `MakeCredential`, `GetAssertion`, and the authenticator data parsed down to a `*ecdsa.PublicKey`."
 [[params.repos]]
@@ -25,3 +25,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   version = "v0.1.0"
   ci = true
   blurb = "How many factors, of which kinds, and what to say when some refuse. A factor that could not be asked has not failed; a factor not reached is not reported as failed; and there is no default policy."
+[[params.repos]]
+  name = "keyfactor"
+  kind = "factor"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  blurb = "The piece between the two: a security key as an `mfa.Factor`, over any transport. It lived in a platform package until a second copy was about to be written that differed in one line."
