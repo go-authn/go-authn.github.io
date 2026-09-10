@@ -70,10 +70,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "oidc"
   kind = "identity"
   type = "lib"
-  version = ""
-  ci = false
-  godoc = false
-  cov = ""
+  version = "v0.1.0"
+  ci = true
+  godoc = true
+  cov = "≥90%"
   blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
 [[params.repos]]
   name = "authnd"
