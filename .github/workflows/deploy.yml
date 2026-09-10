@@ -11,7 +11,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  # Keyed by ref, not the bare word "pages". Without the key, a run started
+  # for a PR and a run started for main are the SAME group, so one waits for
+  # the other and a PR can end up with no checks reported at all -- which
+  # looks exactly like a workflow that never triggered.
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
