@@ -6,24 +6,36 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   unsafe = true
 
 # Each repo card.
-# "kind"  = which slice: protocol / factor / policy.
+# "kind"  = which slice: protocol / factor / policy / identity / server.
 # "type"  = lib (importable module) vs tool.
 # "ci"    = true only where a GitHub Actions ci.yml actually exists, so the CI
 #           badge never renders an empty "no status" -- honest badges only.
+# "godoc" = true only where a module is PUBLISHED, so the card never links to a
+#           pkg.go.dev 404; a repo without one links to itself. Same rule as ci.
+# "cov"   = what CI enforces, not what was measured on somebody's laptop: an
+#           exact 100% where the gate refuses anything less, and the recorded
+#           floor otherwise. The standard is 100% everywhere; three repos do not
+#           meet it yet and the badge says so rather than rounding up.
 # "blurb" = drawn straight from each repo's README.
+
+# --- the factors: is this person here, now? -----------------------------------
 [[params.repos]]
   name = "fido"
   kind = "protocol"
   type = "lib"
   version = "v0.5.0"
   ci = true
-  blurb = "The FIDO client-to-authenticator protocol over any transport: CTAPHID framing, the handshake, `GetInfo`, `MakeCredential`, `GetAssertion`, and the authenticator data parsed down to a `*ecdsa.PublicKey`."
+  godoc = true
+  cov = "100%"
+  blurb = "The FIDO client-to-authenticator protocol over any transport: CTAPHID framing, the handshake, `GetInfo`, `MakeCredential`, `GetAssertion`, `ClientPIN`, and the authenticator data parsed down to a `*ecdsa.PublicKey`."
 [[params.repos]]
   name = "mfa"
   kind = "policy"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.0"
   ci = true
+  godoc = true
+  cov = "100%"
   blurb = "How many factors, of which kinds, and what to say when some refuse. A factor that could not be asked has not failed; a factor not reached is not reported as failed; and there is no default policy."
 [[params.repos]]
   name = "keyfactor"
@@ -31,4 +43,44 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   type = "lib"
   version = "v0.1.0"
   ci = true
+  godoc = true
+  cov = "100%"
   blurb = "The piece between the two: a security key as an `mfa.Factor`, over any transport. It lived in a platform package until a second copy was about to be written that differed in one line."
+[[params.repos]]
+  name = "totp"
+  kind = "factor"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  godoc = true
+  cov = "≥95%"
+  blurb = "Time-based one-time passwords (RFC 6238), and the factor a policy asks. A code is valid for a whole step, so the RFC requires the verifier to refuse a second use of one -- and every step up to the last accepted, not merely the same one."
+
+# --- the identity: who is this person, and what would prove them? -------------
+[[params.repos]]
+  name = "directory"
+  kind = "identity"
+  type = "lib"
+  version = "v0.4.0"
+  ci = true
+  godoc = true
+  cov = "≥85%"
+  blurb = "Who somebody is and what proves them, over a database (`sqldir`), an LDAP server (`ldapdir`) or a file (`hcldir`). What proves somebody is not one thing: an LDAP bind cannot authenticate an SMB session, and neither can a bcrypt."
+[[params.repos]]
+  name = "oidc"
+  kind = "identity"
+  type = "lib"
+  version = ""
+  ci = false
+  godoc = false
+  cov = ""
+  blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
+[[params.repos]]
+  name = "authnd"
+  kind = "server"
+  type = "tool"
+  version = "v0.2.0"
+  ci = true
+  godoc = false
+  cov = "≥80%"
+  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has."

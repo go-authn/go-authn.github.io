@@ -27,7 +27,7 @@ jobs:
       - name: There is a page, and it names the repos
         run: |
           test -s public/index.html || { echo "::error::no index.html was produced"; exit 1; }
-          for repo in fido mfa keyfactor; do
+          for repo in fido mfa keyfactor totp directory oidc authnd; do
             grep -q "go-authn/$repo" public/index.html \
               || { echo "::error::the page does not mention $repo"; exit 1; }
           done
