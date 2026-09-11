@@ -84,3 +84,16 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   godoc = false
   cov = "≥80%"
   blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has."
+
+# --- the service side: a client proving itself to a service you run -----------
+# No "cov": this one has no coverage gate in CI, and the rule above is that the
+# badge says what CI enforces. A number measured once and typed in here would
+# be indistinguishable from one that is checked on every run.
+[[params.repos]]
+  name = "krb5"
+  kind = "protocol"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  godoc = true
+  blurb = "The acceptor half of Kerberos, and only that half: an AP-REQ verified against a keytab and answered with the AP-REP `gokrb5` refuses to build -- without which a GSS-API client asking for mutual authentication completes no context at all. No KDC, no tickets issued. `sec=krb5` and `sec=krb5i`, not `sec=krb5p`."
