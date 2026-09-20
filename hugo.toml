@@ -61,7 +61,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "directory"
   kind = "identity"
   type = "lib"
-  version = "v0.4.0"
+  version = "v0.5.0"
   ci = true
   godoc = true
   cov = "≥85%"
@@ -79,21 +79,29 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "authnd"
   kind = "server"
   type = "tool"
-  version = "v0.2.0"
+  version = "v0.3.0"
   ci = true
   godoc = false
   cov = "≥80%"
-  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has."
+  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has. With a `kerberos` block it is a KDC as well, for the same people; `authnd check` names the ones a realm could never issue a ticket to."
 
 # --- the service side: a client proving itself to a service you run -----------
-# No "cov": this one has no coverage gate in CI, and the rule above is that the
-# badge says what CI enforces. A number measured once and typed in here would
-# be indistinguishable from one that is checked on every run.
 [[params.repos]]
   name = "krb5"
+  kind = "protocol"
+  type = "lib"
+  version = "v0.2.1"
+  ci = true
+  godoc = true
+  cov = "≥90%"
+  blurb = "The accepting half of Kerberos: an AP-REQ verified against a keytab and answered with the AP-REP `gokrb5` refuses to build -- without which a GSS-API client asking for mutual authentication completes no context at all. Signs and seals messages too, so `sec=krb5`, `sec=krb5i` and `sec=krb5p`. It issues nothing; that is kdc."
+
+[[params.repos]]
+  name = "kdc"
   kind = "protocol"
   type = "lib"
   version = "v0.1.0"
   ci = true
   godoc = true
-  blurb = "The acceptor half of Kerberos, and only that half: an AP-REQ verified against a keytab and answered with the AP-REP `gokrb5` refuses to build -- without which a GSS-API client asking for mutual authentication completes no context at all. No KDC, no tickets issued. `sec=krb5` and `sec=krb5i`, not `sec=krb5p`."
+  cov = "≥80%"
+  blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key."
