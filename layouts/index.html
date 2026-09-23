@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ .Site.Title }} — authentication in pure Go</title>
-<meta name="description" content="Authentication in pure Go: the factors that prove somebody is present — a security key over any transport, a one-time code, and a policy that counts factors by KIND rather than by number — and the directory that says who they are and what can prove them, served back out over LDAP. CGO_ENABLED=0, verified against a real security key and read by OpenLDAP's own ldapsearch.">
+<meta name="description" content="Authentication in pure Go: the factors that prove somebody is present — a security key over any transport, a one-time code, and a policy that counts factors by KIND rather than by number — the directory that says who they are and what can prove them, served back out over LDAP, and both halves of Kerberos: tickets issued from that same directory, and tickets accepted, signed and sealed for sec=krb5. CGO_ENABLED=0, verified against a real security key, read by OpenLDAP's own ldapsearch and judged by MIT's own kinit.">
 <style>
   :root {
     --bg: #ffffff; --fg: #1b1f24; --muted: #57606a; --card: #f6f8fa;
@@ -93,13 +93,16 @@
     <img class="logo" src="/img/logo.svg" alt="go-authn logo" width="88" height="88">
     <h1>go-authn</h1>
     <p class="tagline">Authentication in pure Go — the <strong>factors</strong> that prove
-      somebody is present, and the <strong>directory</strong> that says who they are and what can
-      prove them.</p>
+      somebody is present, the <strong>directory</strong> that says who they are and what can
+      prove them — and both halves of <strong>Kerberos</strong>, issuing from that same directory
+      and accepting against a keytab.</p>
     <div class="pills">
       <span class="pill">CGO_ENABLED=0</span>
       <span class="pill">transport-pluggable</span>
       <span class="pill">CTAPHID · CTAP2 · COSE</span>
       <span class="pill">knowledge · possession · inherence</span>
+      <span class="pill">AP-REQ · AP-REP · sec=krb5 · krb5i · krb5p</span>
+      <span class="pill">AS-REQ · TGS-REQ, judged by MIT's own kinit</span>
       <span class="pill">SQL · LDAP · a file</span>
       <span class="pill">verified against a real security key</span>
       <span class="pill">read by OpenLDAP's own ldapsearch</span>
@@ -126,6 +129,23 @@
       is one model over the three sources that carries what proves somebody rather than a password
       field, and <a href="https://github.com/go-authn/authnd">authnd</a> serves it back out over
       LDAP, because almost everything speaks LDAP.</p>
+    <p class="lead"><strong>Kerberos is two halves, and they are two repositories.</strong>
+      <a href="https://github.com/go-authn/kdc">kdc</a> ISSUES: AS-REQ and TGS-REQ over UDP
+      and TCP, backed by the same <code>directory</code>, and judged by MIT&rsquo;s own
+      <code>kinit</code> with no MIT KDC in the loop.
+      <a href="https://github.com/go-authn/krb5">krb5</a> ACCEPTS: an AP-REQ verified against
+      a keytab and answered with the AP-REP <a href="https://github.com/jcmturner/gokrb5">gokrb5</a>
+      will not build &mdash; without which a GSS-API client asking for mutual authentication
+      completes no context at all. Keeping them apart is the point: a service that only
+      accepts tickets should not link a KDC.</p>
+    <p class="lead"><strong>The accepting half signs and seals, which is what the flavours
+      are.</strong> <code>sec=krb5</code> authenticates the context, <code>krb5i</code> adds a
+      MIC per message, <code>krb5p</code> encrypts it &mdash; the per-message layer RPCSEC_GSS
+      needs. It has a consumer outside this organisation:
+      <a href="https://github.com/go-fileshare/fileshare">go-fileshare/fileshare</a> serves a
+      disk image over NFS with <code>sec=krb5</code> through it. That matters because NFSv3 on
+      its own proves nothing &mdash; <code>AUTH_UNIX</code> is a claim the client makes about
+      itself, and a ticket is not.</p>
 
     <p class="lead"><strong>Nothing here is platform-specific.</strong> A <code>Transport</code> moves
       64-byte reports to and from an authenticator, and where those come from &mdash; IOKit on macOS,
