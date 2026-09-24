@@ -61,11 +61,11 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "directory"
   kind = "identity"
   type = "lib"
-  version = "v0.6.0"
+  version = "v0.7.0"
   ci = true
   godoc = true
   cov = "≥85%"
-  blurb = "Who somebody is and what proves them, over a database (`sqldir`), an LDAP server (`ldapdir`) or a file (`hcldir`). What proves somebody is not one thing: an LDAP bind cannot authenticate an SMB session, and neither can a bcrypt."
+  blurb = "Who somebody is and what proves them, over a database (`sqldir`), an LDAP server (`ldapdir`), or the configuration file itself (`hcldir`). What proves somebody is not one thing: an LDAP bind cannot authenticate an SMB session, and neither can a bcrypt."
 [[params.repos]]
   name = "oidc"
   kind = "identity"
@@ -117,7 +117,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "The directory"
   status = "ready"
-  blurb = "`directory` is one model over a database, an LDAP server or a file, carrying what PROVES each person rather than a password field. `authnd` serves it back out over LDAP, because almost everything speaks LDAP."
+  blurb = "`directory` is one model over a database, an LDAP server or the configuration file itself, carrying what PROVES each person rather than a password field. `authnd` serves it back out over LDAP, because almost everything speaks LDAP."
 [[params.phases]]
   name = "Kerberos, both halves"
   status = "ready"
