@@ -12,19 +12,19 @@
   <header class="nav"><div class="wrap">
     <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-authn logo"> go-authn</a>
     <nav><a href="#features">Features</a><a href="#road">Roadmap</a><a href="#eco">Ecosystem</a></nav>
-    <button class="theme-toggle" id="tt" type="button" aria-live="polite"><span aria-hidden="true" id="tti">◐</span><span class="lbl" id="ttl">System</span></button>
+    {{ partial "theme-toggle.html" . }}
     <a class="btn btn-ghost" href="https://github.com/go-authn">GitHub</a>
   </div></header>
 
   <div class="hero"><div class="wrap">
     <div>
       <h1 class="head">Two questions,<br><span class="accent">and they are not the same.</span></h1>
-      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. Pure Go, <code>CGO_ENABLED=0</code>, BSD-3-Clause.</p>
+      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. Pure Go, <code>CGO_ENABLED=0</code>, and it builds for every one of the 47 targets the Go toolchain lists. BSD-3-Clause.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/go-authn">Browse the repositories →</a>
         <a class="btn btn-ghost" href="https://pkg.go.dev/github.com/go-authn/directory">Read the directory API</a>
       </div>
-      <div class="trust"><span><b>9</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>CGO=0</b> on 3 OSes</span></div>
+      <div class="trust"><span><b>9</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>47/47</b> Go targets, CGO=0</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
@@ -68,7 +68,7 @@
       <div><div class="n">9</div><div class="l">repositories, one question each</div></div>
       <div><div class="n">5</div><div class="l">protocols served from one directory</div></div>
       <div><div class="n">100%</div><div class="l">coverage gated on fido, mfa, keyfactor</div></div>
-      <div><div class="n">CGO=0</div><div class="l">Linux · macOS · Windows</div></div>
+      <div><div class="n">47/47</div><div class="l">every target go tool dist list reports</div></div>
     </div>
   </div></section>
 
@@ -101,36 +101,5 @@
   </div></section>
 
   <footer><div class="wrap"><span>© the go-authn authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · no frameworks</span></div></footer>
-  <script>
-  // Three states, in this order: System -> Light -> Dark. "System" sets no
-  // attribute at all, so prefers-color-scheme decides -- which is why the
-  // media queries are written :root:not([data-theme="light"]) rather than
-  // :root:not([data-theme]): a reader who has CHOSEN light must keep it even
-  // when their OS says dark.
-  (function () {
-    var order = ["system", "light", "dark"];
-    var face = { system: ["◐", "System"], light: ["☀", "Light"], dark: ["☽", "Dark"] };
-    var root = document.documentElement, btn = document.getElementById("tt");
-    var icon = document.getElementById("tti"), label = document.getElementById("ttl");
-    function apply(mode) {
-      if (mode === "system") root.removeAttribute("data-theme");
-      else root.setAttribute("data-theme", mode);
-      icon.textContent = face[mode][0];
-      label.textContent = face[mode][1];
-      btn.setAttribute("aria-label", "Colour theme: " + face[mode][1] + ". Click to change.");
-      try { localStorage.setItem("theme", mode); } catch (e) {}
-    }
-    // localStorage throws in a private window and returns nothing with site
-    // data cleared, so every read is guarded and the state is kept in a
-    // variable the page owns.
-    var mode = "system";
-    try { var v = localStorage.getItem("theme"); if (order.indexOf(v) >= 0) mode = v; } catch (e) {}
-    apply(mode);
-    btn.addEventListener("click", function () {
-      mode = order[(order.indexOf(mode) + 1) % order.length];
-      apply(mode);
-    });
-  })();
-  </script>
 </body>
 </html>
