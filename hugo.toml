@@ -105,3 +105,32 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   godoc = true
   cov = "≥80%"
   blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key."
+
+# The .road section, driven the way the reference drives its phases: name,
+# status (ready | active), blurb. The template shows the first sentence.
+# "active" is used for what is NOT yet done, which is what the repos' own
+# READMEs call "Not yet".
+[[params.phases]]
+  name = "The factors"
+  status = "ready"
+  blurb = "`fido` speaks CTAPHID to a security key over any transport, `totp` is RFC 6238 with the replay refusal the RFC requires, and `mfa` counts answers by KIND rather than by number. `keyfactor` is the piece between them."
+[[params.phases]]
+  name = "The directory"
+  status = "ready"
+  blurb = "`directory` is one model over a database, an LDAP server or a file, carrying what PROVES each person rather than a password field. `authnd` serves it back out over LDAP, because almost everything speaks LDAP."
+[[params.phases]]
+  name = "Kerberos, both halves"
+  status = "ready"
+  blurb = "`kdc` issues AS-REQ and TGS-REQ from that same directory, judged by MIT's own kinit. `krb5` accepts an AP-REQ and answers with the AP-REP gokrb5 will not build, then signs and seals for sec=krb5, krb5i and krb5p."
+[[params.phases]]
+  name = "The platform's own factors"
+  status = "ready"
+  blurb = "go-macos/factors, go-gnulinux/factors and go-mswin/factors hand Touch ID, a key over hidraw and Windows Hello to `mfa` as factors. Neither Hello nor Touch ID is FIDO, which is why kinds are counted."
+[[params.phases]]
+  name = "OIDC at the bind"
+  status = "active"
+  blurb = "`oidc` verifies a token into an identity, but a bind carries a name and a password and the only place a token could go is the password field. The shape needs deciding rather than guessing: a token there cannot also carry the code the mfa block splits off the end."
+[[params.phases]]
+  name = "Writes through the LDAP surface"
+  status = "active"
+  blurb = "Nothing in `authnd` modifies anything: add, modify and delete are answered by the library's default, which refuses them. A directory this server fronts is edited where it lives."

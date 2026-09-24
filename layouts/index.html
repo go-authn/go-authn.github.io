@@ -11,29 +11,24 @@
 <body class="lm">
   <header class="nav"><div class="wrap">
     <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-authn logo"> go-authn</a>
-    <nav><a href="#factors">Factors</a><a href="#identity">Identity</a><a href="#kerberos">Kerberos</a><a href="#repos">Repos</a></nav>
-    <button class="theme-toggle" id="tt" type="button" aria-live="polite">
-      <span aria-hidden="true" id="tti">◐</span><span class="lbl" id="ttl">System</span>
-    </button>
+    <nav><a href="#features">Features</a><a href="#road">Roadmap</a><a href="#eco">Ecosystem</a></nav>
+    <button class="theme-toggle" id="tt" type="button" aria-live="polite"><span aria-hidden="true" id="tti">◐</span><span class="lbl" id="ttl">System</span></button>
     <a class="btn btn-ghost" href="https://github.com/go-authn">GitHub</a>
   </div></header>
 
   <div class="hero"><div class="wrap">
     <div>
-      <span class="pill">Pure Go · CGO_ENABLED=0</span>
       <h1 class="head">Two questions,<br><span class="accent">and they are not the same.</span></h1>
-      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b>
-        go-authn answers both: the factors that prove presence, the directory that carries what
-        <i>proves</i> each person rather than a password field, and both halves of Kerberos.</p>
+      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. Pure Go, <code>CGO_ENABLED=0</code>, BSD-3-Clause.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/go-authn">Browse the repositories →</a>
         <a class="btn btn-ghost" href="https://pkg.go.dev/github.com/go-authn/directory">Read the directory API</a>
       </div>
-      <div class="trust"><span><b>9</b> repositories</span><span><b>100%</b> coverage gated on three</span><span><b>CGO=0</b> on Linux, macOS, Windows</span></div>
+      <div class="trust"><span><b>9</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>CGO=0</b> on 3 OSes</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
-<pre><span class="c-com"># an LDAP server for people who live in a database</span>
+<pre><span class="c-com"># an LDAP server for people who live somewhere else</span>
 <span class="c-cmd">$ authnd</span> -c authnd.hcl
 <span class="c-out">ldap://0.0.0.0:389 · sqldir · 412 people</span>
 <span class="c-out">kerberos: realm EXAMPLE.ORG on :88 (udp, tcp)</span>
@@ -49,68 +44,26 @@
     </div>
   </div></div>
 
-  <div class="strip" id="repos"><div class="wrap">
+  <div class="strip"><div class="wrap">
     <span class="lead-line">Nine repositories — <b>one question each</b>, so a service that only accepts tickets never links a KDC</span>
-    <div class="mods">{{ range .Site.Params.repos }}<a href="https://github.com/go-authn/{{ .name }}">{{ .name }}{{ with .version }} <span style="opacity:.6">{{ . }}</span>{{ end }}</a>{{ end }}</div>
+    <div class="mods">{{ range .Site.Params.repos }}<a href="https://github.com/go-authn/{{ .name }}">{{ .name }}</a>{{ end }}</div>
   </div></div>
 
-  <section id="factors"><div class="wrap">
-    <span class="eyebrow">Is this person here, now?</span>
-    <h2>Multi-<i>factor</i>, not multi-check.</h2>
-    <p class="lead">A passphrase and a recovery code are both things you know: whoever learned one has usually
-      learned the other from the same place. The classification is the point — <code>Policy{Count: 2, DistinctKinds: true}</code>
-      is what <i>two-factor</i> is normally taken to mean, and two passphrases never satisfy it.</p>
+  <section id="features"><div class="wrap">
+    <span class="eyebrow">Why go-authn</span>
+    <h2>Multi-<i>factor</i>, not multi-check — and a directory that knows the difference.</h2>
+    <p class="lead">A passphrase and a recovery code are both things you know: whoever learned one has usually learned the other from the same place. Requiring both buys far less than the count suggests.</p>
     <div class="grid">
       <div class="card"><div class="ico">🔑</div><h3>A key over any transport</h3><p><code>fido</code> speaks CTAPHID, <code>GetInfo</code>, <code>MakeCredential</code>, <code>GetAssertion</code>, <code>ClientPIN</code>. A <code>Transport</code> moves 64-byte reports; where they come from is somebody else's problem.</p></div>
-      <div class="card"><div class="ico">⏱️</div><h3>One-time codes, replayed once</h3><p><code>totp</code> is RFC 6238 with the refusal the RFC requires: a code is valid for a whole step, so the verifier must reject a second use — and every step up to the last accepted.</p></div>
-      <div class="card"><div class="ico">⚖️</div><h3>A policy that counts by kind</h3><p><code>mfa</code> decides how many factors, of which kinds, and what to say when some refuse. A factor that could not be <i>asked</i> has not failed, and there is no default policy.</p></div>
-      <div class="card"><div class="ico">🖥️</div><h3>The platform's own factors</h3><p><a href="https://github.com/go-macos/factors">go-macos/factors</a> gives Touch ID, <a href="https://github.com/go-gnulinux/factors">go-gnulinux/factors</a> the key over hidraw, <a href="https://github.com/go-mswin/factors">go-mswin/factors</a> Windows Hello. Neither Hello nor Touch ID is FIDO — which is <i>why</i> kinds are counted.</p></div>
-      <div class="card"><div class="ico">🧪</div><h3>Proven against a real key</h3><p>Registered, asserted, and the signature verified with the public key the key itself handed out. A COSE key could not verify anything if its extent were wrong by a byte.</p></div>
-      <div class="card"><div class="ico">📖</div><h3>The reference was read first</h3><p>libfido2 and the CTAP spec read as <i>documentation</i>. That caught two faults a key would never have shown: <code>CTAPHID_KEEPALIVE</code> is not an answer, and the message limit is the framing's.</p></div>
+      <div class="card"><div class="ico">⚖️</div><h3>Counted by kind</h3><p><code>Policy{Count: 2, DistinctKinds: true}</code> is what <i>two-factor</i> is normally taken to mean, and two passphrases never satisfy it. A factor that could not be asked has not failed.</p></div>
+      <div class="card"><div class="ico">🗂️</div><h3>What proves somebody is not one thing</h3><p>SMB needs an NT hash; S3 needs the password itself, because SigV4 computes an HMAC from it. An identity holding only the hash serves one and cannot serve the other — so <code>directory</code> carries what <i>proves</i> each person.</p></div>
+      <div class="card"><div class="ico">🎫</div><h3>Both halves of Kerberos</h3><p><code>kdc</code> issues, <code>krb5</code> accepts — two repositories, so a service that only accepts tickets does not link a KDC. It signs and seals too, which is what <code>krb5i</code> and <code>krb5p</code> are.</p></div>
+      <div class="card"><div class="ico">🖥️</div><h3>The platform's own factors</h3><p><a href="https://github.com/go-macos/factors">Touch ID</a>, <a href="https://github.com/go-gnulinux/factors">a key over hidraw</a>, <a href="https://github.com/go-mswin/factors">Windows Hello</a> — each an <code>mfa.Factor</code>, so a policy never learns which one it got.</p></div>
+      <div class="card"><div class="ico">⚖️</div><h3>Judged by other people's tools</h3><p>OpenLDAP's own <code>ldapsearch</code> reads the server; MIT's own <code>kinit</code> takes the tickets. A fixture built from one reading of a protocol can only confirm that reading.</p></div>
     </div>
   </div></section>
 
-  <section id="identity" style="padding-top:10px"><div class="wrap">
-    <span class="eyebrow">Who is this person, and what would prove them?</span>
-    <h2>What proves somebody is not one thing.</h2>
-    <p class="lead">That used to be an assertion on this page. It is a measurement now:
-      <a href="https://github.com/go-fileshare/fileshare">go-fileshare/fileshare</a> serves <b>one</b> set of
-      people over <b>five</b> protocols out of one <code>directory</code>, and asks a different question of each
-      person for each one.</p>
-    <div class="tablewrap" style="margin-top:26px">
-      <table class="bench">
-        <thead><tr><th>Serving a person over</th><th style="text-align:left">needs, from their directory entry</th></tr></thead>
-        <tbody>
-          <tr><td>SMB</td><td style="text-align:left"><code>NTHash</code> — NTLMv2 works from the password or its <code>MD4(UTF16LE(password))</code></td></tr>
-          <tr><td>S3</td><td style="text-align:left"><code>Password</code>, the secret itself: SigV4 proves possession by computing an HMAC <b>from</b> it</td></tr>
-          <tr><td>WebDAV</td><td style="text-align:left"><code>Verifier</code> <b>or</b> <code>Password</code> — a source that can only <i>check</i> one is enough</td></tr>
-          <tr><td>SFTP</td><td style="text-align:left"><code>PublicKeys</code>, or a trusted user CA</td></tr>
-          <tr><td>NFS</td><td style="text-align:left">a Kerberos ticket — not a directory credential at all</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="lead" style="margin-top:18px"><b>SMB and S3 are the pair worth reading twice.</b> Neighbours, not copies:
-      an identity holding only an NT hash serves SMB and <i>cannot</i> serve S3, because an HMAC cannot be computed
-      from an MD4. So <code>directory</code> carries what <i>proves</i> somebody, over a database (<code>sqldir</code>),
-      an LDAP server (<code>ldapdir</code>) or a file (<code>hcldir</code>) — and <code>authnd</code> serves it back
-      out over LDAP, because almost everything speaks LDAP.</p>
-  </div></section>
-
-  <section id="kerberos" style="padding-top:10px"><div class="wrap">
-    <span class="eyebrow">Both halves</span>
-    <h2>Kerberos is two halves, and they are two repositories.</h2>
-    <div class="grid" style="grid-template-columns:repeat(2,1fr)">
-      <div class="card"><div class="ico">🎫</div><h3><code>kdc</code> issues</h3><p>AS-REQ and TGS-REQ over UDP and TCP, backed by the same <code>directory</code>, judged by MIT's own <code>kinit</code> and <code>kvno</code> with no MIT KDC in the loop. Only a source holding the <b>password</b> can back a realm: a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key.</p></div>
-      <div class="card"><div class="ico">🛡️</div><h3><code>krb5</code> accepts</h3><p>An AP-REQ verified against a keytab and answered with the AP-REP <a href="https://github.com/jcmturner/gokrb5">gokrb5</a> will not build — without which a GSS-API client asking for mutual authentication completes no context at all. It signs and seals too, so <code>sec=krb5</code>, <code>krb5i</code> and <code>krb5p</code>.</p></div>
-    </div>
-    <p class="lead" style="margin-top:22px">Keeping them apart is the point: a service that only accepts tickets should not link a KDC.
-      The acceptor has consumers outside this organisation — <a href="https://github.com/go-fileshare/fileshare">fileshare</a>
-      serves a disk image over NFS with <code>sec=krb5</code>, and <a href="https://github.com/go-filesystems/nfs">go-filesystems/nfs</a>
-      links it directly one layer below. That matters because NFSv3 on its own proves nothing: <code>AUTH_UNIX</code> is a claim
-      the client makes about itself, and a ticket is not.</p>
-  </div></section>
-
-  <section style="padding-top:10px"><div class="wrap">
+  <section id="perf" style="padding-top:10px"><div class="wrap">
     <div class="stats">
       <div><div class="n">9</div><div class="l">repositories, one question each</div></div>
       <div><div class="n">5</div><div class="l">protocols served from one directory</div></div>
@@ -119,12 +72,30 @@
     </div>
   </div></section>
 
-  <section style="padding-top:20px"><div class="wrap">
+  <section id="road" style="padding-top:20px"><div class="wrap">
+    <span class="eyebrow">The road</span>
+    <h2>What is here, and what is not.</h2>
+    <div class="road">
+      {{ range .Site.Params.phases }}
+      {{ $tag := cond (eq .status "ready") "ready" "active" }}
+      {{/* Card shows a trimmed blurb: the first sentence, or a word-boundary truncation if that sentence runs long. */}}
+      {{/* Strip markdown emphasis/code markers so a truncation can never leave a half-open span. */}}
+      {{ $plain := replaceRE "[`*]" "" .blurb }}
+      {{ $first := index (findRE "^[^.]+\\.?" $plain 1) 0 }}
+      {{ $short := $first }}
+      {{ if gt (len $first) 150 }}{{ $short = printf "%s…" (index (findRE "^.{0,140}\\b" $first 1) 0) }}{{ end }}
+      <div class="ph">
+        <div class="top"><h4>{{ .name }}</h4><span class="tag {{ $tag }}">{{ cond (eq .status "ready") "ready" "not yet" }}</span></div>
+        <p>{{ $short }}</p>
+      </div>
+      {{ end }}
+    </div>
+  </div></section>
+
+  <section id="eco" style="padding-top:6px"><div class="wrap">
     <div class="band">
-      <h2>Judged by something that is not this code.</h2>
-      <p>OpenLDAP's own <code>ldapsearch</code> reads the server and is refused with <i>Invalid credentials (49)</i>
-        for a wrong password and for the empty one. MIT's own <code>kinit</code> takes the tickets. A fixture built
-        from one reading of a protocol can only ever confirm that reading.</p>
+      <h2>Authentication that ships like Go.</h2>
+      <p>No cgo, no frameworks, no runtime to install. The factors, the directory and both halves of Kerberos — each answering one question, each proven by something that is not this code.</p>
       <a class="btn btn-ghost" href="https://github.com/go-authn">Read the source on GitHub →</a>
     </div>
   </div></section>
@@ -138,7 +109,7 @@
   // when their OS says dark.
   (function () {
     var order = ["system", "light", "dark"];
-    var face = { system: ["\u25D0", "System"], light: ["\u2600", "Light"], dark: ["\u263D", "Dark"] };
+    var face = { system: ["◐", "System"], light: ["☀", "Light"], dark: ["☽", "Dark"] };
     var root = document.documentElement, btn = document.getElementById("tt");
     var icon = document.getElementById("tti"), label = document.getElementById("ttl");
     function apply(mode) {
