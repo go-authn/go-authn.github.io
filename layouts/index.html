@@ -141,11 +141,26 @@
     <p class="lead"><strong>The accepting half signs and seals, which is what the flavours
       are.</strong> <code>sec=krb5</code> authenticates the context, <code>krb5i</code> adds a
       MIC per message, <code>krb5p</code> encrypts it &mdash; the per-message layer RPCSEC_GSS
-      needs. It has a consumer outside this organisation:
+      needs. It has consumers outside this organisation:
       <a href="https://github.com/go-fileshare/fileshare">go-fileshare/fileshare</a> serves a
-      disk image over NFS with <code>sec=krb5</code> through it. That matters because NFSv3 on
-      its own proves nothing &mdash; <code>AUTH_UNIX</code> is a claim the client makes about
-      itself, and a ticket is not.</p>
+      disk image over NFS with <code>sec=krb5</code> through it, and
+      <a href="https://github.com/go-filesystems/nfs">go-filesystems/nfs</a> links it directly
+      one layer below. That matters because NFSv3 on its own proves nothing &mdash;
+      <code>AUTH_UNIX</code> is a claim the client makes about itself, and a ticket is not.</p>
+
+    <p class="lead"><strong>&ldquo;What proves somebody is not one thing&rdquo; used to be an
+      assertion on this page. It is a measurement now.</strong>
+      <a href="https://github.com/go-fileshare/fileshare">fileshare</a> serves one set of people
+      over <strong>five</strong> protocols out of one <code>directory</code>, and asks a different
+      question of each person for each one: <strong>SMB</strong> needs their
+      <code>NTHash</code>; <strong>S3</strong> needs the <code>Password</code> itself, because
+      SigV4 proves possession by computing an HMAC <em>from</em> it; <strong>WebDAV</strong>
+      accepts a <code>Verifier</code> <em>or</em> a password, so a source that can only
+      <em>check</em> one is enough; <strong>SFTP</strong> wants <code>PublicKeys</code> or a
+      trusted user CA; and <strong>NFS</strong> wants a Kerberos ticket rather than a directory
+      credential at all. SMB and S3 are neighbours rather than copies &mdash; an identity holding
+      only an NT hash serves SMB and <em>cannot</em> serve S3, because an HMAC cannot be computed
+      from an MD4. The same shape decides who a realm can issue to.</p>
 
     <p class="lead"><strong>Nothing here is platform-specific.</strong> A <code>Transport</code> moves
       64-byte reports to and from an authenticator, and where those come from &mdash; IOKit on macOS,
@@ -153,6 +168,19 @@
       <a href="https://github.com/go-macos/fido">go-macos/fido</a>: four calls to IOKit, no framework,
       no driver, no cgo. A FIDO key opens with no entitlement and no user consent, which is what makes
       the whole path reachable from Go at all.</p>
+
+    <p class="lead"><strong>Three repositories hand a platform&rsquo;s own authentication to
+      <code>mfa</code> as factors</strong>, one per system, each satisfying <code>mfa.Factor</code>
+      so a policy written here never learns which one it got:
+      <a href="https://github.com/go-macos/factors">go-macos/factors</a> gives
+      <code>TouchID</code>, <code>DeviceOwner</code> and a security key;
+      <a href="https://github.com/go-gnulinux/factors">go-gnulinux/factors</a> gives the key over
+      hidraw; <a href="https://github.com/go-mswin/factors">go-mswin/factors</a> gives
+      <code>WindowsHello</code> and a key through <code>webauthn.dll</code>, since a
+      <code>Transport</code> is not available to it. Touch ID and Windows Hello are why
+      <code>mfa</code> counts factors by <strong>kind</strong> rather than by name: neither is
+      FIDO, so a policy asking for two distinct kinds is satisfied by one of them plus a key, and
+      not by two keys.</p>
 
     <p class="lead"><strong>The reference was read first, and it earned its keep.</strong> In pure Go,
       client-side, there was nothing to reuse: the reference of the field is Yubico's
@@ -194,9 +222,16 @@
       side is proven the same way, by something that is not this code:
       <strong>OpenLDAP's own <code>ldapsearch</code></strong> reads the server, and is refused with
       <em>Invalid credentials (49)</em> for a wrong password and for the empty one. BSD-3-Clause
-      throughout. Consumers: <a href="https://github.com/go-macos/fido">go-macos/fido</a> for the
-      transport, and <a href="https://github.com/go-fileshare/fileshare">go-fileshare/fileshare</a>,
-      which describes its people with the same <code>users</code> block.</p>
+      throughout. Consumers, measured rather than remembered:
+      <a href="https://github.com/go-macos/fido">go-macos/fido</a> and
+      <a href="https://github.com/go-gnulinux/fido">go-gnulinux/fido</a> for the transport;
+      <a href="https://github.com/go-macos/factors">go-macos/factors</a>,
+      <a href="https://github.com/go-gnulinux/factors">go-gnulinux/factors</a> and
+      <a href="https://github.com/go-mswin/factors">go-mswin/factors</a> for the platform factors;
+      <a href="https://github.com/go-filesystems/nfs">go-filesystems/nfs</a> for the Kerberos
+      acceptor; and <a href="https://github.com/go-fileshare/fileshare">go-fileshare/fileshare</a>,
+      which links <code>directory</code>, <code>krb5</code> and <code>oidc</code> at once and
+      describes its people with the same <code>users</code> block.</p>
   </main>
 
   <footer class="wrap">
