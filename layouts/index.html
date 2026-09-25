@@ -45,7 +45,11 @@
   </div></div>
 
   <div class="strip"><div class="wrap">
-    <span class="lead-line">Nine repositories — <b>one question each</b>, so a service that only accepts tickets never links a KDC</span>
+    {{/* ⛔ DERIVED, not typed. This said "Nine repositories" while the list
+         below it showed ten, because a repository was added and the sentence
+         above it was not. A number written next to the data it counts will
+         disagree with it eventually, and nothing fails when it does. */}}
+    <span class="lead-line">{{ len .Site.Params.repos }} repositories — <b>one question each</b>, so a service that only accepts tickets never links a KDC</span>
     <div class="mods">{{ range .Site.Params.repos }}<a href="https://github.com/go-authn/{{ .name }}">{{ .name }}</a>{{ end }}</div>
   </div></div>
 
@@ -65,9 +69,13 @@
 
   <section id="perf" style="padding-top:10px"><div class="wrap">
     <div class="stats">
-      <div><div class="n">9</div><div class="l">repositories, one question each</div></div>
+      <div><div class="n">{{ len .Site.Params.repos }}</div><div class="l">repositories, one question each</div></div>
       <div><div class="n">5</div><div class="l">protocols served from one directory</div></div>
-      <div><div class="n">100%</div><div class="l">coverage gated on fido, mfa, keyfactor</div></div>
+      {{/* The repos whose CI refuses anything under 100%, named from the
+           data rather than from memory: this list was right when it was
+           typed and had no way of staying right. */}}
+      {{ $full := where .Site.Params.repos "cov" "100%" }}
+      <div><div class="n">100%</div><div class="l">coverage gated on {{ range $i, $r := $full }}{{ if $i }}, {{ end }}{{ $r.name }}{{ end }}</div></div>
       <div><div class="n">47/47</div><div class="l">every target go tool dist list reports</div></div>
     </div>
   </div></section>
