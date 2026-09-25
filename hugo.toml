@@ -6,17 +6,31 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   unsafe = true
 
 # Each repo card.
+#
+# ⛔ ONLY "name" AND "blurb" ARE RENDERED. The template shows the repo's name
+# and the first sentence of its blurb; nothing else on this list reaches the
+# page.
+#
+# The other fields described badges that the template no longer draws. They
+# were removed in #16, which rebuilt this page to the reference's skeleton
+# exactly -- and the DATA was left behind, along with a comment block saying
+# what the badges would show. It was then dutifully updated in three later
+# changes, each one describing the update as making the page current, when it
+# changed nothing anybody sees.
+#
+# They are kept because they are a true record of each repo and the badges may
+# come back. But the comment now says what is so:
+#
 # "kind"  = which slice: protocol / factor / policy / identity / server.
-# "type"  = lib (importable module) vs tool.
-# "ci"    = true only where a GitHub Actions ci.yml actually exists, so the CI
-#           badge never renders an empty "no status" -- honest badges only.
-# "godoc" = true only where a module is PUBLISHED, so the card never links to a
-#           pkg.go.dev 404; a repo without one links to itself. Same rule as ci.
-# "cov"   = what CI enforces, not what was measured on somebody's laptop: an
-#           exact 100% where the gate refuses anything less, and the recorded
-#           floor otherwise. The standard is 100% everywhere; three repos do not
-#           meet it yet and the badge says so rather than rounding up.
-# "blurb" = drawn straight from each repo's README.
+#           NOT RENDERED -- the sections are written out in the template.
+# "type"  = lib (importable module) vs tool.       NOT RENDERED.
+# "ci"    = a GitHub Actions ci.yml exists.        NOT RENDERED.
+# "godoc" = the module is published on pkg.go.dev. NOT RENDERED.
+# "cov"   = what CI ENFORCES, not what was measured on somebody's laptop.
+#                                                  NOT RENDERED.
+# "version" = the latest tag.                      NOT RENDERED.
+# "name"  = RENDERED, as the card's heading.
+# "blurb" = RENDERED, first sentence only, drawn from each repo's README.
 
 # --- the factors: is this person here, now? -----------------------------------
 [[params.repos]]
