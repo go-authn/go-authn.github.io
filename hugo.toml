@@ -76,6 +76,15 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "≥90%"
   blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
 [[params.repos]]
+  name = "ldap"
+  kind = "protocol"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  godoc = true
+  cov = "99.9%"
+  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4513/4515/7628 and judged by OpenLDAP's own ldapsearch."
+[[params.repos]]
   name = "authnd"
   kind = "server"
   type = "tool"
@@ -128,9 +137,9 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   blurb = "go-macos/factors, go-gnulinux/factors and go-mswin/factors hand Touch ID, a key over hidraw and Windows Hello to `mfa` as factors. Neither Hello nor Touch ID is FIDO, which is why kinds are counted."
 [[params.phases]]
   name = "OIDC at the bind"
-  status = "active"
-  blurb = "`oidc` verifies a token into an identity, but a bind carries a name and a password and the only place a token could go is the password field. The shape needs deciding rather than guessing: a token there cannot also carry the code the mfa block splits off the end."
+  status = "ready"
+  blurb = "A token goes where the protocol has a place for it: SASL OAUTHBEARER (RFC 7628), not the password field, which the `mfa` block already uses for the code. How many factors a token is worth is whatever the issuer says it checked in `amr` -- that is the only evidence there is, so a token with none is one factor and a two-factor policy refuses it."
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
-  blurb = "Nothing in `authnd` modifies anything: add, modify and delete are answered by the library's default, which refuses them. A directory this server fronts is edited where it lives."
+  blurb = "Nothing in `authnd` modifies anything yet, but the obstacle has moved. It was the shape: the LDAP library it used held a modify as three BUCKETS, so `delete member; add member` and `add member; delete member` -- opposite outcomes -- arrived as the same request. `go-authn/ldap` carries them as an ordered list, which is what RFC 4511 4.6 requires and what makes a correct write expressible at all."
