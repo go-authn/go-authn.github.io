@@ -79,11 +79,11 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "ldap"
   kind = "protocol"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.0"
   ci = true
   godoc = true
-  cov = "99.9%"
-  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4513/4515/7628 and judged by OpenLDAP's own ldapsearch."
+  cov = "99.7%"
+  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE, paged results and the read entry controls. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4513/4515/7628 and judged by OpenLDAP's own ldapsearch."
 [[params.repos]]
   name = "authnd"
   kind = "server"
@@ -142,4 +142,4 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
-  blurb = "Nothing in `authnd` modifies anything yet, but the obstacle has moved. It was the shape: the LDAP library it used held a modify as three BUCKETS, so `delete member; add member` and `add member; delete member` -- opposite outcomes -- arrived as the same request. `go-authn/ldap` carries them as an ordered list, which is what RFC 4511 4.6 requires and what makes a correct write expressible at all."
+  blurb = "Nothing in `authnd` modifies anything yet, and the obstacle is now policy rather than shape. `go-authn/ldap` carries a modify as an ORDERED list (RFC 4511 4.6), so `delete member; add member` and `add member; delete member` are no longer the same request; and it answers the read entry controls (RFC 4527), so a write can report the entry before and after -- which a client changing a group membership needs in order to know what it actually wrote."
