@@ -97,7 +97,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "99.7%"
-  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE, paged results and the read entry controls. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4513/4515/7628 and judged by OpenLDAP's own ldapsearch."
+  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE, paged results and the read entry controls. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4512/4513/4514/4515/2696/4527 and judged by OpenLDAP's own ldapsearch, which reads back the supportedControl and supportedFeatures it publishes. SASL binds are carried mechanism-agnostically, so OAUTHBEARER (RFC 7628) is authnd's, not this package's."
 [[params.repos]]
   name = "authnd"
   kind = "server"
