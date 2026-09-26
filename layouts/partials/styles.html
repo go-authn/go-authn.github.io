@@ -1,3 +1,30 @@
+{{/* The brand colours are the ONLY thing that differs between the orgs using
+     this stylesheet, and they are read from [params.brand] rather than written
+     in. Two byte-identical copies of this file already existed in go-authn and
+     go-fileshare; a third differing only in a colour block is how a shared
+     stylesheet stops being shared.
+
+     Every default below is the cyan those two use TODAY, so they can adopt this
+     file with no params and render exactly what they render now. That property
+     is checked, not assumed: see the README.
+
+     safeCSS on every value, including the hex ones that would not need it.
+     html/template rejects rgba(...) in a CSS context and substitutes
+     ZgotmplZ for the whole declaration -- it does not fail, it renders
+     nonsense -- so the chip tints came out as `--chip-bg:ZgotmplZ` until a
+     render-against-render check caught it. Marking only the values that
+     need it would leave the next person working out which kind each one is. */}}
+{{ $br := .Site.Params.brand | default dict }}
+{{ $base   := $br.base   | default "#0079A8" }}
+{{ $deep   := $br.deep   | default "#054A66" }}
+{{ $bright := $br.bright | default "#22CCE2" }}
+{{ $shadow := $br.shadow | default "rgba(0,121,168,.7)" }}
+{{ $chipBg     := $br.chipBg     | default "#e8f8fc" }}
+{{ $chipBorder := $br.chipBorder | default "#bde9f4" }}
+{{ $chipFg     := $br.chipFg     | default "#054A66" }}
+{{ $chipBgD     := $br.chipBgDark     | default "rgba(34,204,226,.14)" }}
+{{ $chipBorderD := $br.chipBorderDark | default "rgba(34,204,226,.32)" }}
+{{ $chipFgD     := $br.chipFgDark     | default "#7fe4f3" }}
 <script>
   /* Apply the saved theme before first paint to avoid a flash; "system" leaves no attribute. */
   (function(){var m=localStorage.getItem('theme');if(m&&m!=='system')document.documentElement.setAttribute('data-theme',m);})();
@@ -5,10 +32,10 @@
 <style>
   :root{
     /* brand */
-    --cyan:#0079A8; --cyan-deep:#054A66;
-    --grad:linear-gradient(135deg,#0079A8,#054A66);
+    --cyan:{{ $base | safeCSS }}; --cyan-deep:{{ $deep | safeCSS }};
+    --grad:linear-gradient(135deg,{{ $base | safeCSS }},{{ $deep | safeCSS }});
     /* interactive / text accent (brightens in dark for contrast) */
-    --accent:#0079A8; --accent-deep:#054A66;
+    --accent:{{ $base | safeCSS }}; --accent-deep:{{ $deep | safeCSS }};
     /* text + surfaces (light) */
     --ink:#0f1115; --slate:#475569; --muted-2:#8893a4;
     --line:#e7e9ee; --bg:#ffffff; --bg-soft:#f7f8fb;
@@ -16,7 +43,7 @@
     --nav-bg:rgba(255,255,255,.82); --nav-border:#e7e9ee;
     --elev-border:#e0e3ea; --ghost-border-hover:#cfd4dd;
     /* ruby chip (pill / icon / active tag) */
-    --chip-bg:#e8f8fc; --chip-border:#bde9f4; --chip-fg:#054A66;
+    --chip-bg:{{ $chipBg | safeCSS }}; --chip-border:{{ $chipBorder | safeCSS }}; --chip-fg:{{ $chipFg | safeCSS }};
     /* semantic */
     --ok-bg:#e7f6ec; --ok-fg:#1a7f37; --win-bg:#f3fbf5;
     --stats-bg:#0f1115; --na:#a8b0bd;
@@ -25,25 +52,25 @@
   /* Dark theme — applied by the media query for un-forced "system", and by an explicit toggle. */
   @media(prefers-color-scheme:dark){
     :root:not([data-theme]){
-      --accent:#22CCE2; --accent-deep:#22CCE2;
+      --accent:{{ $bright | safeCSS }}; --accent-deep:{{ $bright | safeCSS }};
       --ink:#e6edf3; --slate:#9aa4b2; --muted-2:#7d8798;
       --line:#232a36; --bg:#0b0e14; --bg-soft:#111620;
       --surface:#141a24; --surface-2:#141a24;
       --nav-bg:rgba(11,14,20,.82); --nav-border:#1c2331;
       --elev-border:#2a3342; --ghost-border-hover:#3a4556;
-      --chip-bg:rgba(34,204,226,.14); --chip-border:rgba(34,204,226,.32); --chip-fg:#7fe4f3;
+      --chip-bg:{{ $chipBgD | safeCSS }}; --chip-border:{{ $chipBorderD | safeCSS }}; --chip-fg:{{ $chipFgD | safeCSS }};
       --ok-bg:rgba(63,185,80,.16); --ok-fg:#56d364; --win-bg:rgba(63,185,80,.08);
       --stats-bg:#141a24; --na:#5b6472;
     }
   }
   :root[data-theme="dark"]{
-    --accent:#22CCE2; --accent-deep:#22CCE2;
+    --accent:{{ $bright | safeCSS }}; --accent-deep:{{ $bright | safeCSS }};
     --ink:#e6edf3; --slate:#9aa4b2; --muted-2:#7d8798;
     --line:#232a36; --bg:#0b0e14; --bg-soft:#111620;
     --surface:#141a24; --surface-2:#141a24;
     --nav-bg:rgba(11,14,20,.82); --nav-border:#1c2331;
     --elev-border:#2a3342; --ghost-border-hover:#3a4556;
-    --chip-bg:rgba(34,204,226,.14); --chip-border:rgba(34,204,226,.32); --chip-fg:#7fe4f3;
+    --chip-bg:{{ $chipBgD | safeCSS }}; --chip-border:{{ $chipBorderD | safeCSS }}; --chip-fg:{{ $chipFgD | safeCSS }};
     --ok-bg:rgba(63,185,80,.16); --ok-fg:#56d364; --win-bg:rgba(63,185,80,.08);
     --stats-bg:#141a24; --na:#5b6472;
   }
@@ -67,7 +94,7 @@
   .theme-toggle:hover{border-color:var(--ghost-border-hover)}
   .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:11px 18px;
     border-radius:12px;border:1px solid transparent;transition:.15s}
-  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 10px 24px -10px rgba(0,121,168,.7)}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 10px 24px -10px {{ $shadow | safeCSS }}}
   .btn-primary:hover{transform:translateY(-1px)}
   .btn-ghost{border-color:var(--line);color:var(--ink);background:var(--surface-2)}
   .btn-ghost:hover{border-color:var(--ghost-border-hover)}
