@@ -90,6 +90,24 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "≥90%"
   blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
 [[params.repos]]
+  name = "saml"
+  kind = "identity"
+  type = "lib"
+  version = "v0.1.0"
+  ci = true
+  godoc = true
+  cov = "≥92%"
+  blurb = "A SAML 2.0 service provider in a federation such as RENATER or eduGAIN: metadata verified against a pinned certificate, one signed assertion and nothing else, and scoped identifiers only in the scopes the federation grants each university. Judged by RENATER's own signed metadata and by xmlsec1."
+[[params.repos]]
+  name = "bridge"
+  kind = "server"
+  type = "tool"
+  version = "v0.2.0"
+  ci = true
+  godoc = false
+  cov = "≥88%"
+  blurb = "An OpenID Connect provider in front of a SAML federation: people log in at their own university, and applications get a token. Device grant, SSH certificates and application passwords for the protocols that cannot carry one, and what OpenPubkey needs of a provider -- judged by the openpubkey library itself."
+[[params.repos]]
   name = "ldap"
   kind = "protocol"
   type = "lib"
@@ -153,6 +171,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "OIDC at the bind"
   status = "ready"
   blurb = "A token goes where the protocol has a place for it: SASL OAUTHBEARER (RFC 7628), not the password field, which the `mfa` block already uses for the code. How many factors a token is worth is whatever the issuer says it checked in `amr` -- that is the only evidence there is, so a token with none is one factor and a two-factor policy refuses it."
+[[params.phases]]
+  name = "A federation behind OpenID Connect"
+  status = "ready"
+  blurb = "`saml` is the service provider RENATER and eduGAIN talk to, `bridge` the OpenID Connect provider in front of it, so that go-fileshare and anything else that speaks OIDC reaches every university in the federation. A token over WebDAV, a certificate over SFTP -- the provider's own or an opkssh one -- and an application password for SMB and S3, which have nowhere to put either."
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"

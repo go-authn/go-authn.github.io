@@ -24,7 +24,7 @@
         <a class="btn btn-primary" href="https://github.com/go-authn">Browse the repositories →</a>
         <a class="btn btn-ghost" href="https://pkg.go.dev/github.com/go-authn/directory">Read the directory API</a>
       </div>
-      <div class="trust"><span><b>9</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>47/47</b> Go targets, CGO=0</span></div>
+      <div class="trust"><span><b>{{ len .Site.Params.repos }}</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>47/47</b> Go targets, CGO=0</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
@@ -62,6 +62,7 @@
       <div class="card"><div class="ico">⚖️</div><h3>Counted by kind</h3><p><code>Policy{Count: 2, DistinctKinds: true}</code> is what <i>two-factor</i> is normally taken to mean, and two passphrases never satisfy it. A factor that could not be asked has not failed.</p></div>
       <div class="card"><div class="ico">🗂️</div><h3>What proves somebody is not one thing</h3><p>SMB needs an NT hash; S3 needs the password itself, because SigV4 computes an HMAC from it. An identity holding only the hash serves one and cannot serve the other — so <code>directory</code> carries what <i>proves</i> each person.</p></div>
       <div class="card"><div class="ico">🎫</div><h3>Both halves of Kerberos</h3><p><code>kdc</code> issues, <code>krb5</code> accepts — two repositories, so a service that only accepts tickets does not link a KDC. It signs and seals too, which is what <code>krb5i</code> and <code>krb5p</code> are.</p></div>
+      <div class="card"><div class="ico">🎓</div><h3>Every university, one login</h3><p><code>bridge</code> is an OpenID Connect provider in front of RENATER or eduGAIN, through <code>saml</code>: an identifier from outside a university's own scope is dropped, and an assertion nobody signed is never read.</p></div>
       <div class="card"><div class="ico">🖥️</div><h3>The platform's own factors</h3><p><a href="https://github.com/go-macos/factors">Touch ID</a>, <a href="https://github.com/go-gnulinux/factors">a key over hidraw</a>, <a href="https://github.com/go-mswin/factors">Windows Hello</a> — each an <code>mfa.Factor</code>, so a policy never learns which one it got.</p></div>
       <div class="card"><div class="ico">⚖️</div><h3>Judged by other people's tools</h3><p>OpenLDAP's own <code>ldapsearch</code> reads the server; MIT's own <code>kinit</code> takes the tickets. A fixture built from one reading of a protocol can only confirm that reading.</p></div>
     </div>
