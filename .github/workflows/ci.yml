@@ -27,7 +27,20 @@ jobs:
       - name: There is a page, and it names the repos
         run: |
           test -s public/index.html || { echo "::error::no index.html was produced"; exit 1; }
-          for repo in fido mfa keyfactor totp directory oidc authnd krb5; do
+          # ⛔ Read the list from hugo.toml, do not keep one here. The
+          # hand-written list named eight repositories and the site had
+          # twelve: saml, bridge, ldap and kdc could have vanished from the
+          # page without this noticing.
+          # Only the name of a [[params.repos]] block: hugo.toml has other
+          # tables with a "name" key at the same indentation, and a plain grep
+          # picked up section titles like "Kerberos, both halves" -- 23 names
+          # where there are 15 repositories.
+          repos=$(awk -F'"' '/^\[\[params\.repos\]\]/{inb=1;next} /^\[/{inb=0} inb && /name = /{print $2}' hugo.toml)
+          # A list that reads empty would pass this loop without entering it.
+          n=$(printf '%s\n' "$repos" | grep -c .)
+          test "$n" -ge 10 || { echo "::error::read only $n repo names out of hugo.toml"; exit 1; }
+          echo "checking $n repositories"
+          for repo in $repos; do
             grep -q "go-authn/$repo" public/index.html \
               || { echo "::error::the page does not mention $repo"; exit 1; }
           done
