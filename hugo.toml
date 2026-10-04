@@ -27,9 +27,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 # "ci"    = a GitHub Actions ci.yml exists.        NOT RENDERED.
 # "godoc" = the module is published on pkg.go.dev. NOT RENDERED.
 # "cov"   = what CI ENFORCES, not what was measured on somebody's laptop.
-#                                                  NOT RENDERED.
+#           RENDERED ONLY AS "100%": the stats line names every repo whose
+#           value is exactly that, so a gate raised to 100% must say so here.
 # "version" = the latest tag.                      NOT RENDERED.
-# "name"  = RENDERED, as the card's heading.
+# "name"  = RENDERED, as the card's heading; the count of entries is a stat.
 # "blurb" = RENDERED, first sentence only, drawn from each repo's README.
 
 # --- the factors: is this person here, now? -----------------------------------
@@ -37,7 +38,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "fido"
   kind = "protocol"
   type = "lib"
-  version = "v0.5.0"
+  version = "v0.5.2"
   ci = true
   godoc = true
   cov = "100%"
@@ -46,7 +47,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "mfa"
   kind = "policy"
   type = "lib"
-  version = "v0.2.0"
+  version = "v0.3.0"
   ci = true
   godoc = true
   cov = "100%"
@@ -55,7 +56,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "keyfactor"
   kind = "factor"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.1"
   ci = true
   godoc = true
   cov = "100%"
@@ -64,7 +65,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "totp"
   kind = "factor"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.0"
   ci = true
   godoc = true
   cov = "≥95%"
@@ -75,7 +76,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "directory"
   kind = "identity"
   type = "lib"
-  version = "v0.7.0"
+  version = "v0.10.1"
   ci = true
   godoc = true
   cov = "≥85%"
@@ -84,7 +85,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "oidc"
   kind = "identity"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.0"
   ci = true
   godoc = true
   cov = "≥90%"
@@ -93,7 +94,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "saml"
   kind = "identity"
   type = "lib"
-  version = "v0.2.0"
+  version = "v0.2.2"
   ci = true
   godoc = true
   cov = "≥92%"
@@ -102,7 +103,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "bridge"
   kind = "server"
   type = "tool"
-  version = "v0.10.1"
+  version = "v0.12.0"
   ci = true
   godoc = false
   cov = "≥88%"
@@ -111,7 +112,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "ldap"
   kind = "protocol"
   type = "lib"
-  version = "v0.2.0"
+  version = "v0.4.0"
   ci = true
   godoc = true
   cov = "99.7%"
@@ -120,10 +121,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "authnd"
   kind = "server"
   type = "tool"
-  version = "v0.3.0"
+  version = "v0.7.0"
   ci = true
   godoc = false
-  cov = "≥80%"
+  cov = "≥88%"
   blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has. With a `kerberos` block it is a KDC as well, for the same people; `authnd check` names the ones a realm could never issue a ticket to."
 
 # --- the service side: a client proving itself to a service you run -----------
@@ -131,7 +132,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "krb5"
   kind = "protocol"
   type = "lib"
-  version = "v0.2.1"
+  version = "v0.2.3"
   ci = true
   godoc = true
   cov = "≥90%"
@@ -141,11 +142,40 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "kdc"
   kind = "protocol"
   type = "lib"
-  version = "v0.1.0"
+  version = "v0.2.1"
   ci = true
   godoc = true
   cov = "≥80%"
   blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key."
+
+# --- revocation: taking back what was issued, on every server ----------------
+[[params.repos]]
+  name = "krl"
+  kind = "protocol"
+  type = "lib"
+  version = "v0.4.0"
+  ci = true
+  godoc = true
+  cov = "100%"
+  blurb = "OpenSSH key revocation lists in Go: parse, build and check the binary format sshd loads through `RevokedKeys` and `ssh-keygen -k` writes, which `golang.org/x/crypto/ssh` does not support. Judged by OpenSSH's own ssh-keygen, which writes the same bytes for the same revocations."
+[[params.repos]]
+  name = "revocation"
+  kind = "server"
+  type = "tool"
+  version = "v0.2.1"
+  ci = true
+  godoc = true
+  cov = "≥93%"
+  blurb = "Distributing revocation lists, SSH KRLs and X.509 CRLs, from the authority that writes them to every server that must refuse what they list, without trusting anything in between and without ever mistaking a stale list for a current one. `revokd` fetches, verifies, keeps state across restarts, fails closed for sshd when a list lapses, and mirrors to other agents."
+[[params.repos]]
+  name = "servercert"
+  kind = "server"
+  type = "lib"
+  version = "v0.1.2"
+  ci = true
+  godoc = true
+  cov = "100%"
+  blurb = "Where a daemon's TLS server certificate comes from: a certificate and key on disk, re-read when they change, or an ACME CA through autocert, External Account Binding included."
 
 # The .road section, driven the way the reference drives its phases: name,
 # status (ready | active), blurb. The template shows the first sentence.
@@ -175,6 +205,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "A federation behind OpenID Connect"
   status = "ready"
   blurb = "`saml` is the service provider RENATER and eduGAIN talk to, `bridge` the OpenID Connect provider in front of it, so that go-fileshare and anything else that speaks OIDC reaches every university in the federation. A token over WebDAV, a certificate over SFTP -- the provider's own or an opkssh one -- and an application password for SMB and S3, which have nowhere to put either."
+[[params.phases]]
+  name = "Revocation that reaches every server"
+  status = "ready"
+  blurb = "`bridge` signs its KRL and CRL and dates them, `revokd` verifies each before any server sees it, refuses an older one after a newer, and fails closed for sshd when the list lapses. Copying list files by hand does not scale, and a mirror in between is trusted for nothing."
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
