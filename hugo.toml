@@ -166,6 +166,17 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "100%"
   blurb = "Where a daemon's TLS server certificate comes from: a certificate and key on disk, re-read when they change, or an ACME CA through autocert, External Account Binding included."
 
+
+# --- a VPN on the same identity ---------------------------------------------
+[[params.repos]]
+  name = "wireguard"
+  kind = "protocol"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "100%"
+  blurb = "WireGuard public keys for the people a go-authn provider knows: what a key is -- one canonical spelling, never a point of low order -- and the signed list of the keys people registered, which a gateway pulls with its own credentials and never accepts older than one it has seen. Judged by wg(8) itself."
+
 # The .road section, driven the way the reference drives its phases: name,
 # status (ready | active), blurb. The template shows the first sentence.
 # "active" is used for what is NOT yet done, which is what the repos' own
@@ -198,6 +209,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "Revocation that reaches every server"
   status = "ready"
   blurb = "`bridge` signs its KRL and CRL and dates them, `revokd` verifies each before any server sees it, refuses an older one after a newer, and fails closed for sshd when the list lapses. Copying list files by hand does not scale, and a mirror in between is trusted for nothing."
+[[params.phases]]
+  name = "A VPN on the same identity"
+  status = "ready"
+  blurb = "`bridge` keeps whose each WireGuard key is: a person's VPN client registers its device's public key with a token, for a lease, and disabling the person or their institution takes the keys back with their certificates. A gateway -- claimward's, first -- reads the live keys as a list signed for it alone, through `wireguard`, and enrolls a device only if its owner registered it. WireGuard itself has no certificates, no expiry and no revocation, which is why the answer has to live outside it."
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
