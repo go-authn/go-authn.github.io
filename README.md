@@ -3,10 +3,18 @@
 The landing page for [go-authn](https://github.com/go-authn), built with Hugo
 and deployed by GitHub Actions.
 
-The layout is the `go-*` family template: a single self-contained
-`layouts/index.html` with inline `:root` variables, a three-way theme toggle
-(system / light / dark, defaulting to system), and a grid of repo cards drawn
-from `[[params.repos]]` in `hugo.toml`.
+The layout is the `go-*` family template: `layouts/partials/styles.html` for
+the whole design system, `layouts/partials/theme-toggle.html` for the three-way
+theme toggle (system / light / dark, defaulting to system), and a
+`layouts/index.html` whose grid of repo cards is drawn from `[[params.repos]]`
+in `hugo.toml`.
+
+That stylesheet is **byte-identical** to the copies `go-fileshare`, `go-pkgx`
+and `go-pdfkit` carry, and its colours come from `[params.brand]` — whose every
+default is the cyan this org uses, so this site declares no brand block at all
+and renders what it has always rendered. That property is checked rather than
+claimed: build `go-pkgx`'s stylesheet with its `[params.brand]` commented out
+and the emitted `<style>` block is identical to this one's.
 
 Three per-repo flags in `hugo.toml` exist so the page never asserts something
 it has not checked:
