@@ -177,6 +177,16 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "100%"
   blurb = "WireGuard public keys for the people a go-authn provider knows: what a key is -- one canonical spelling, never a point of low order -- and the signed list of the keys people registered, which a gateway pulls with its own credentials and never accepts older than one it has seen. Judged by wg(8) itself."
 
+# --- SSH for the EuroHPC federation ------------------------------------------
+[[params.repos]]
+  name = "sshcert"
+  kind = "protocol"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "100%"
+  blurb = "SSH user certificates for a federation: the domain grant of the GÉANT/EuroHPC SSH CA profile, encoded byte for byte as its specification writes it, and sshcert-authorize, the site's AuthorizedPrincipalsCommand -- which, unlike GÉANT's own tool, refuses a certificate that carries no grant. Judged by ssh-keygen, a real sshd and GÉANT's code."
+
 # The .road section, driven the way the reference drives its phases: name,
 # status (ready | active), blurb. The template shows the first sentence.
 # "active" is used for what is NOT yet done, which is what the repos' own
@@ -213,6 +223,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "A VPN on the same identity"
   status = "ready"
   blurb = "`bridge` keeps whose each WireGuard key is: a person's VPN client registers its device's public key with a token, for a lease, and disabling the person or their institution takes the keys back with their certificates. A gateway -- claimward's, first -- reads the live keys as a list signed for it alone, through `wireguard`, and enrolls a device only if its owner registered it. WireGuard itself has no certificates, no expiry and no revocation, which is why the answer has to live outside it."
+[[params.phases]]
+  name = "The EuroHPC SSH CA profile"
+  status = "ready"
+  blurb = "`bridge` issues, per client, certificates in the profile of the EuroHPC Federation Platform's SSH CA: one principal from a chosen claim (`voperson_id` for the MyAccessID CUID), the permit-* a shell needs, `source-address`, a short validity, and the domain grant naming the hosting entity's hosts, encoded by `sshcert`. A site trusts the key from `/ssh/config` as EFP documents, and go-fileshare refuses a certificate not granted to it. Unlike GÉANT's tool, ours fail closed when the grant is missing, and the bridge keeps a KRL, which EFP documents none of."
 [[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
