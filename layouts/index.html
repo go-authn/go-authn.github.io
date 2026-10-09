@@ -11,10 +11,12 @@
 <body class="lm">
   <header class="nav"><div class="wrap">
     <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-authn logo"> go-authn</a>
-    <nav><a href="#features">Features</a><a href="#road">Roadmap</a><a href="#eco">Ecosystem</a></nav>
+    <nav><a href="#why">Why</a><a href="#check">Check</a><a href="#road">Roadmap</a><a href="#eco">Ecosystem</a></nav>
     {{ partial "theme-toggle.html" . }}
-    <a class="btn btn-ghost" href="https://github.com/go-authn">{{ partial "icons/mark-github.html" . }}GitHub</a>
   </div></header>
+  {{/* The organisation, not one repository: this page is about nineteen of
+       them, and the strip below links each one. */}}
+  {{ partial "fork-ribbon.html" "https://github.com/go-authn" }}
 
   <div class="hero"><div class="wrap">
     <div>
@@ -22,25 +24,28 @@
       <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. Pure Go, <code>CGO_ENABLED=0</code>, and it builds for every one of the 47 targets the Go toolchain lists. BSD-3-Clause.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/go-authn">{{ partial "icons/mark-github.html" . }}Browse the repositories →</a>
-        <a class="btn btn-ghost" href="https://pkg.go.dev/github.com/go-authn/directory">{{ partial "icons/book.html" . }}Read the directory API</a>
       </div>
       <div class="trust"><span><b>{{ len .Site.Params.repos }}</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>47/47</b> Go targets, CGO=0</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
+{{/* ⛔ Real transcript, captured from authnd v0.9.6 and OpenLDAP's own
+     ldapsearch on 2026-10-09. What stood here before was written by hand:
+     a startup line authnd never printed ("· sqldir · 412 people") and a
+     `check --kerberos` flag that does not exist. go-fileshare's landing
+     showed the way: ask the binary, and print what it said. */}}
 <pre><span class="c-com"># an LDAP server for people who live somewhere else</span>
 <span class="c-cmd">$ authnd</span> -c authnd.hcl
-<span class="c-out">ldap://0.0.0.0:389 · sqldir · 412 people</span>
-<span class="c-out">kerberos: realm EXAMPLE.ORG on :88 (udp, tcp)</span>
-
-<span class="c-com"># which of them a realm could never issue a ticket to</span>
-<span class="c-cmd">$ authnd</span> check --kerberos
-<span class="c-out">alice   ok</span>
-<span class="c-key">bob     no key: the source holds a verifier, not a password</span>
+<span class="c-out">ldap on 127.0.0.1:3893, serving 2 people from the configuration file</span>
 
 <span class="c-com"># OpenLDAP's own client, which knows nothing about this</span>
-<span class="c-cmd">$ ldapsearch</span> -x -D <span class="c-str">'uid=alice,ou=people,dc=example'</span> -W
-<span class="c-out">ldap_bind: Invalid credentials (49)</span></pre>
+<span class="c-cmd">$ ldapsearch</span> -x -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -w wrong
+<span class="c-out">ldap_bind: Invalid credentials (49)</span>
+
+<span class="c-com"># the right password binds — and still may not list everybody</span>
+<span class="c-cmd">$ ldapsearch</span> -x -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -W uid=alice
+<span class="c-key">result: 50 Insufficient access
+text: only a reader may search</span></pre>
     </div>
   </div></div>
 
@@ -53,7 +58,41 @@
     <div class="mods">{{ range .Site.Params.repos }}<a href="https://github.com/go-authn/{{ .name }}">{{ .name }}</a>{{ end }}</div>
   </div></div>
 
-  <section id="features"><div class="wrap">
+  <section id="check" style="padding-top:10px"><div class="wrap">
+    <span class="eyebrow">Before anything is restarted</span>
+    <h2>It says who it would serve, and <i>who it never could</i>.</h2>
+    <p class="lead"><code>authnd check</code> opens every source — the file, the database, the other directory — and prints who would be published, what each person can prove, and who a Kerberos realm could issue a ticket to, without listening and without printing a secret. The output below is real, from authnd v0.9.6.</p>
+    <div class="term" style="margin-top:22px">
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd check — zsh</span></div>
+{{/* Verbatim, full width for the same reason as go-fileshare's: a table
+     whose columns are computed from its own contents stops being the
+     program's answer once it is retyped narrower. alice has a password in a
+     file; bob only an NT hash: it binds over LDAP, and it is the RC4 Kerberos key,
+     which this realm does not issue. */}}
+<pre style="white-space:pre;overflow-x:auto"><span class="c-cmd">$ authnd</span> check -c authnd.hcl
+<span class="c-out">ldap://127.0.0.1:3893, base dc=example,dc=org
+
+USER   FROM                    CAN PROVE   PUBLISHED AS
+alice  the configuration file  a password  uid and cn
+bob    the configuration file  an NT hash  uid and cn
+
+GROUP  MEMBERS
+staff  alice and bob
+
+realm EXAMPLE.ORG on 127.0.0.1:88 (udp and tcp), keytab krb5.keytab
+  can be issued a ticket: alice</span>
+<span class="c-key">  CANNOT, whatever they type: bob</span>
+<span class="c-out" style="display:block;white-space:pre-wrap">  a KDC must decrypt the pre-authentication with the person's key
+  bob: an NT hash is only the RC4-HMAC key (RFC 4757), and this realm issues aes256-cts-hmac-sha1-96 alone, whose key is derived from the password itself
+
+a bind carries a password
+no reader is declared: nothing may search, and every bind still works
+sambaNTPassword is not published, so nothing here can authenticate an SMB session (NTLMv2 needs the password or its MD4, and a bind cannot answer it)</span>
+<span class="c-out">this configuration can be served</span></pre>
+    </div>
+  </div></section>
+
+  <section id="why"><div class="wrap">
     <span class="eyebrow">Why go-authn</span>
     <h2>Multi-<i>factor</i>, not multi-check — and a directory that knows the difference.</h2>
     <p class="lead">A passphrase and a recovery code are both things you know: whoever learned one has usually learned the other from the same place. Requiring both buys far less than the count suggests.</p>
