@@ -156,7 +156,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥93%"
-  blurb = "Distributing revocation lists, SSH KRLs and X.509 CRLs, from the authority that writes them to every server that must refuse what they list, without trusting anything in between and without ever mistaking a stale list for a current one. `revokd` fetches, verifies, keeps state across restarts, fails closed for sshd when a list lapses, and mirrors to other agents."
+  blurb = "Distributing revocation lists, SSH KRLs and X.509 CRLs, from the authority that writes them to every server that must refuse what they list, without trusting anything in between and without ever mistaking a stale list for a current one. `authn-revokd` fetches, verifies, keeps state across restarts, fails closed for sshd when a list lapses, and mirrors to other agents."
 [[params.repos]]
   name = "servercert"
   kind = "server"
@@ -218,7 +218,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "Revocation that reaches every server"
   status = "ready"
-  blurb = "`bridge` signs its KRL and CRL and dates them, `revokd` verifies each before any server sees it, refuses an older one after a newer, and fails closed for sshd when the list lapses. Copying list files by hand does not scale, and a mirror in between is trusted for nothing."
+  blurb = "`bridge` signs its KRL and CRL and dates them, `authn-revokd` verifies each before any server sees it, refuses an older one after a newer, and fails closed for sshd when the list lapses. Copying list files by hand does not scale, and a mirror in between is trusted for nothing."
 [[params.phases]]
   name = "A VPN on the same identity"
   status = "ready"
