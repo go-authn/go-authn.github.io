@@ -99,6 +99,14 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "≥90%"
   blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
 [[params.repos]]
+  name = "rp"
+  kind = "identity"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "≥94%"
+  blurb = "Log people in with OpenID Connect: the authorization code with PKCE, a loopback login for native applications (RFC 8252), and refresh for one resource server at a time (RFC 8707). The half oidc leaves out, shared by go-fileshare's portal and console."
+[[params.repos]]
   name = "saml"
   kind = "identity"
   type = "lib"
