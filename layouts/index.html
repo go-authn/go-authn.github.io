@@ -29,23 +29,27 @@
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
-{{/* ⛔ Real transcript, captured from authnd v0.9.6 and OpenLDAP's own
-     ldapsearch on 2026-10-09. What stood here before was written by hand:
+{{/* ⛔ Real transcript, captured from the verified authnd v0.11.1 release
+     binary and OpenLDAP's own ldapsearch on 2026-10-18 (first captured from
+     v0.9.6 on 2026-10-09). What stood here before that was written by hand:
      a startup line authnd never printed ("· sqldir · 412 people") and a
      `check --kerberos` flag that does not exist. go-fileshare's landing
-     showed the way: ask the binary, and print what it said. */}}
+     showed the way: ask the binary, and print what it said. The password
+     comes from a file (-y), and -LLL makes the refusal the whole output, so
+     nothing below is cut. serve.hcl is authnd.hcl without its kerberos
+     block: a realm on port 88 needs root to listen. */}}
 <pre><span class="c-com"># an LDAP server for people who live somewhere else</span>
-<span class="c-cmd">$ authnd</span> -c authnd.hcl
+<span class="c-cmd">$ authnd</span> -c serve.hcl
 <span class="c-out">ldap on 127.0.0.1:3893, serving 2 people from the configuration file</span>
 
 <span class="c-com"># OpenLDAP's own client, which knows nothing about this</span>
-<span class="c-cmd">$ ldapsearch</span> -x -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -w wrong
+<span class="c-cmd">$ ldapsearch</span> -x -H ldap://127.0.0.1:3893 -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -w wrong
 <span class="c-out">ldap_bind: Invalid credentials (49)</span>
 
 <span class="c-com"># the right password binds — and still may not list everybody</span>
-<span class="c-cmd">$ ldapsearch</span> -x -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -W uid=alice
-<span class="c-key">result: 50 Insufficient access
-text: only a reader may search</span></pre>
+<span class="c-cmd">$ ldapsearch</span> -LLL -x -H ldap://127.0.0.1:3893 -D <span class="c-str">'uid=alice,ou=people,dc=example,dc=org'</span> -y alice.pw uid=alice
+<span class="c-key">Insufficient access (50)
+Additional information: only a reader may search</span></pre>
     </div>
   </div></div>
 
@@ -61,23 +65,32 @@ text: only a reader may search</span></pre>
   <section id="check" style="padding-top:10px"><div class="wrap">
     <span class="eyebrow">Before anything is restarted</span>
     <h2>It says who it would serve, and <i>who it never could</i>.</h2>
-    <p class="lead"><code>authnd check</code> opens every source — the file, the database, the other directory — and prints who would be published, what each person can prove, and who a Kerberos realm could issue a ticket to, without listening and without printing a secret. The output below is real, from authnd v0.9.6.</p>
+    <p class="lead"><code>authnd check</code> opens every source — the file, the database, the other directory — and prints who would be published, what each person can prove, and who a Kerberos realm could issue a ticket to, without listening and without printing a secret — and, since v0.11.0, which standard object classes each entry will carry. The output below is real, from authnd v0.11.1.</p>
     <div class="term" style="margin-top:22px">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd check — zsh</span></div>
 {{/* Verbatim, full width for the same reason as go-fileshare's: a table
      whose columns are computed from its own contents stops being the
      program's answer once it is retyped narrower. alice has a password in a
-     file; bob only an NT hash: it binds over LDAP, and it is the RC4 Kerberos key,
-     which this realm does not issue. */}}
+     file; bob only an NT hash, which is what an SMB server needs: it is not a
+     password a bind can be checked against, and it is the RC4 Kerberos key,
+     which this realm does not issue. ⛔ This comment said bob "binds over
+     LDAP" until 2026-10-18: measured, bob's bind is refused (49) on v0.9.6 as
+     on v0.11.1 — the comment was wrong, not the server, and v0.11's check
+     now says so in the output itself. Re-captured on 2026-10-18 from the
+     verified v0.11.1 release binary, with a keytab made by Heimdal's ktutil. */}}
 <pre style="white-space:pre;overflow-x:auto"><span class="c-cmd">$ authnd</span> check -c authnd.hcl
 <span class="c-out">ldap://127.0.0.1:3893, base dc=example,dc=org
 
-USER   FROM                    CAN PROVE   PUBLISHED AS
-alice  the configuration file  a password  uid and cn
-bob    the configuration file  an NT hash  uid and cn
+USER   FROM                    CAN PROVE   PUBLISHED AS        WITH
+alice  the configuration file  a password  account, uidObject  uid
+bob    the configuration file  an NT hash  account, uidObject  uid
 
-GROUP  MEMBERS
-staff  alice and bob
+GROUP  MEMBERS        PUBLISHED AS
+staff  alice and bob  groupOfNames
+
+alice has no uidNumber, gidNumber or homeDirectory: not a posixAccount, published as account, uidObject
+bob has no uidNumber, gidNumber or homeDirectory: not a posixAccount, published as account, uidObject
+group staff has no gidNumber: not a posixGroup, published as a groupOfNames (member DNs, no memberUid)
 
 realm EXAMPLE.ORG on 127.0.0.1:88 (udp and tcp), keytab krb5.keytab
   can be issued a ticket: alice</span>
@@ -86,8 +99,10 @@ realm EXAMPLE.ORG on 127.0.0.1:88 (udp and tcp), keytab krb5.keytab
   bob: an NT hash is only the RC4-HMAC key (RFC 4757), and this realm issues aes256-cts-hmac-sha1-96 alone, whose key is derived from the password itself
 
 a bind carries a password
-no reader is declared: nothing may search, and every bind still works
+bob cannot bind with a password: the source holds only what an SMB server needs (an NT hash), which a bind cannot be checked against
+no reader is declared: nothing may search, and binds are not affected
 sambaNTPassword is not published, so nothing here can authenticate an SMB session (NTLMv2 needs the password or its MD4, and a bind cannot answer it)</span>
+
 <span class="c-out">this configuration can be served</span></pre>
     </div>
   </div></section>
