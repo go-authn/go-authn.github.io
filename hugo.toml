@@ -107,6 +107,14 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   cov = "≥94%"
   blurb = "Log people in with OpenID Connect: the authorization code with PKCE, a loopback login for native applications (RFC 8252), and refresh for one resource server at a time (RFC 8707). The half oidc leaves out, shared by go-fileshare's portal and console."
 [[params.repos]]
+  name = "scim"
+  kind = "identity"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "≥92%"
+  blurb = "SCIM 2.0 provisioning, the service-provider half: an identity provider such as Entra ID or Okta creates, updates and deletes people and groups in your application over HTTP (RFC 7643, RFC 7644), over a `Backend` you write. Entra ID's and Okta's own payloads are tested."
+[[params.repos]]
   name = "saml"
   kind = "identity"
   type = "lib"
