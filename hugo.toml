@@ -242,6 +242,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   status = "ready"
   blurb = "`saml` is the service provider RENATER and eduGAIN talk to, `bridge` the OpenID Connect provider in front of it, so that go-fileshare and anything else that speaks OIDC reaches every university in the federation. A token over WebDAV, a certificate over SFTP -- the provider's own or an opkssh one -- and an application password for SMB and S3, which have nowhere to put either."
 [[params.phases]]
+  name = "Provisioning from the identity provider"
+  status = "ready"
+  blurb = "`scim` lets Entra ID or Okta provision people and groups in your application (RFC 7643, RFC 7644), over a `Backend` you write. Entra ID's and Okta's own payloads are tested, and go-llmflow's gateway uses it to provision its administrators."
+[[params.phases]]
   name = "Revocation that reaches every server"
   status = "ready"
   blurb = "`bridge` signs its KRL and CRL and dates them, `authn-revokd` verifies each before any server sees it, refuses an older one after a newer, and fails closed for sshd when the list lapses. Copying list files by hand does not scale, and a mirror in between is trusted for nothing."
