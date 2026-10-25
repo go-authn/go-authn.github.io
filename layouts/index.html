@@ -29,9 +29,10 @@
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd — zsh</span></div>
-{{/* ⛔ Real transcript, captured from the verified authnd v0.11.1 release
-     binary and OpenLDAP's own ldapsearch on 2026-10-18 (first captured from
-     v0.9.6 on 2026-10-09). What stood here before that was written by hand:
+{{/* ⛔ Real transcript, captured from the verified authnd v0.12.0 release
+     binary (go1.27.3 in `go version -m`) and OpenLDAP's own ldapsearch on
+     2026-10-25 (earlier from v0.11.1 on 2026-10-18, first from v0.9.6 on
+     2026-10-09; the output did not change). What stood here before that was written by hand:
      a startup line authnd never printed ("· sqldir · 412 people") and a
      `check --kerberos` flag that does not exist. go-fileshare's landing
      showed the way: ask the binary, and print what it said. The password
@@ -65,7 +66,7 @@ Additional information: only a reader may search</span></pre>
   <section id="check" style="padding-top:10px"><div class="wrap">
     <span class="eyebrow">Before anything is restarted</span>
     <h2>It says who it would serve, and <i>who it never could</i>.</h2>
-    <p class="lead"><code>authnd check</code> opens every source — the file, the database, the other directory — and prints who would be published, what each person can prove, and who a Kerberos realm could issue a ticket to, without listening and without printing a secret — and, since v0.11.0, which standard object classes each entry will carry. The output below is real, from authnd v0.11.1.</p>
+    <p class="lead"><code>authnd check</code> opens every source — the file, the database, the other directory — and prints who would be published, what each person can prove, and who a Kerberos realm could issue a ticket to, without listening and without printing a secret — and, since v0.11.0, which standard object classes each entry will carry. The output below is real, from authnd v0.12.0.</p>
     <div class="term" style="margin-top:22px">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">authnd check — zsh</span></div>
 {{/* Verbatim, full width for the same reason as go-fileshare's: a table
@@ -76,8 +77,11 @@ Additional information: only a reader may search</span></pre>
      which this realm does not issue. ⛔ This comment said bob "binds over
      LDAP" until 2026-10-18: measured, bob's bind is refused (49) on v0.9.6 as
      on v0.11.1 — the comment was wrong, not the server, and v0.11's check
-     now says so in the output itself. Re-captured on 2026-10-18 from the
-     verified v0.11.1 release binary, with a keytab made by Heimdal's ktutil. */}}
+     now says so in the output itself. Re-captured on 2026-10-25 from the
+     verified v0.12.0 release binary (go1.27.3 in `go version -m`), with a
+     keytab made by Heimdal's `ktutil -k krb5.keytab add -r -p
+     krbtgt/EXAMPLE.ORG@EXAMPLE.ORG -V 1 -e aes256-cts-hmac-sha1-96`
+     (earlier on 2026-10-18 from v0.11.1; the output did not change). */}}
 <pre style="white-space:pre;overflow-x:auto"><span class="c-cmd">$ authnd</span> check -c authnd.hcl
 <span class="c-out">ldap://127.0.0.1:3893, base dc=example,dc=org
 
