@@ -137,7 +137,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "99.7%"
-  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE, paged results and the read entry controls. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4512/4513/4514/4515/2696/4527 and judged by OpenLDAP's own ldapsearch, which reads back the supportedControl and supportedFeatures it publishes. SASL binds are carried mechanism-agnostically, so OAUTHBEARER (RFC 7628) is authnd's, not this package's."
+  blurb = "The LDAP protocol half that `authnd` runs: the wire, the filter, the scope, the root DSE, paged results, the read entry controls, and the schema with its DIT content rules, name forms and DIT structure rules (RFC 4512), read, checked and enforced. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4512/4513/4514/4515/2696/4527 and judged by OpenLDAP's own ldapsearch, which reads back the supportedControl and supportedFeatures it publishes. SASL binds are carried mechanism-agnostically, so OAUTHBEARER (RFC 7628) is authnd's, not this package's."
 [[params.repos]]
   name = "authnd"
   kind = "server"
@@ -145,7 +145,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = false
   cov = "≥88%"
-  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has. With a `kerberos` block it is a KDC as well, for the same people; `authnd check` names the ones a realm could never issue a ticket to."
+  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has. With a `kerberos` block it is a KDC as well, for the same people; `authnd check` names the ones a realm could never issue a ticket to. A site's own schema may carry DIT content rules, name forms and DIT structure rules: a tree they forbid refuses to start, and an entry they forbid is left out and said."
 
 # --- the service side: a client proving itself to a service you run -----------
 [[params.repos]]
