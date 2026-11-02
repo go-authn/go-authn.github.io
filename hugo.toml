@@ -164,7 +164,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥80%"
-  blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key."
+  blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key. A client that lost its reply over UDP and sends the same bytes again gets the reply it already had (MIT's lookaside, ported), never KRB_AP_ERR_REPEAT; and a directory that cannot be read is KDC_ERR_SVC_UNAVAILABLE, never a wrong password."
 
 # --- revocation: taking back what was issued, on every server ----------------
 [[params.repos]]
