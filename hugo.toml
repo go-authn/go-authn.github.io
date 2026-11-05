@@ -44,8 +44,15 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 #           correct servercert straight after, and bridge was stale again
 #           within the hour (v0.12.0 here, v0.13.0 on GitHub). The tag is on
 #           GitHub, which is the one copy that cannot drift from itself.
-# "name"  = RENDERED, as the card's heading; the count of entries is a stat.
-# "blurb" = RENDERED, first sentence only, drawn from each repo's README.
+# "name"  = RENDERED, as one link in the list of repositories; the count of
+#           entries is a stat. There is no card per repository: #16 rebuilt the
+#           page on the reference's skeleton, which has none.
+# "blurb" was REMOVED on 2026-11-05. Since #16 nothing rendered it, and this
+#           comment still said it did: #68 edited the kdc one, the deploy
+#           succeeded, and the sentence was nowhere on the page (#69). What a
+#           repository is lives in its README; what the page says is in
+#           [[params.phases]] (first sentence, cut at 140 characters) and in
+#           layouts/index.html.
 
 # --- the factors: is this person here, now? -----------------------------------
 [[params.repos]]
@@ -55,7 +62,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "The FIDO client-to-authenticator protocol over any transport: CTAPHID framing, the handshake, `GetInfo`, `MakeCredential`, `GetAssertion`, `ClientPIN`, and the authenticator data parsed down to a `*ecdsa.PublicKey`."
 [[params.repos]]
   name = "mfa"
   kind = "policy"
@@ -63,7 +69,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "How many factors, of which kinds, and what to say when some refuse. A factor that could not be asked has not failed; a factor not reached is not reported as failed; and there is no default policy."
 [[params.repos]]
   name = "keyfactor"
   kind = "factor"
@@ -71,7 +76,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "The piece between the two: a security key as an `mfa.Factor`, over any transport. It lived in a platform package until a second copy was about to be written that differed in one line."
 [[params.repos]]
   name = "totp"
   kind = "factor"
@@ -79,7 +83,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥95%"
-  blurb = "Time-based one-time passwords (RFC 6238), and the factor a policy asks. A code is valid for a whole step, so the RFC requires the verifier to refuse a second use of one -- and every step up to the last accepted, not merely the same one."
 
 # --- the identity: who is this person, and what would prove them? -------------
 [[params.repos]]
@@ -89,7 +92,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥85%"
-  blurb = "Who somebody is and what proves them, over a database (`sqldir`), an LDAP server (`ldapdir`), or the configuration file itself (`hcldir`). What proves somebody is not one thing: an LDAP bind cannot authenticate an SMB session, and neither can a bcrypt."
 [[params.repos]]
   name = "oidc"
   kind = "identity"
@@ -97,7 +99,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥90%"
-  blurb = "An OpenID Connect token verified into an identity: discovery, JWKS, and the refusals that matter. For the things that speak a token instead of a directory."
 [[params.repos]]
   name = "rp"
   kind = "identity"
@@ -105,7 +106,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥94%"
-  blurb = "Log people in with OpenID Connect: the authorization code with PKCE, a loopback login for native applications (RFC 8252), and refresh for one resource server at a time (RFC 8707). The half oidc leaves out, shared by go-fileshare's portal and console."
 [[params.repos]]
   name = "scim"
   kind = "identity"
@@ -113,7 +113,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥92%"
-  blurb = "SCIM 2.0 provisioning, the service-provider half: an identity provider such as Entra ID or Okta creates, updates and deletes people and groups in your application over HTTP (RFC 7643, RFC 7644), over a `Backend` you write. Entra ID's and Okta's own payloads are tested."
 [[params.repos]]
   name = "saml"
   kind = "identity"
@@ -121,7 +120,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥92%"
-  blurb = "A SAML 2.0 service provider in a federation such as RENATER or eduGAIN: metadata verified against a pinned certificate, one signed assertion and nothing else, and scoped identifiers only in the scopes the federation grants each university. Judged by RENATER's own signed metadata and by xmlsec1."
 [[params.repos]]
   name = "bridge"
   kind = "server"
@@ -129,7 +127,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = false
   cov = "≥88%"
-  blurb = "An OpenID Connect provider in front of a SAML federation: people log in at their own university, and applications get a token. Device grant, SSH certificates and application passwords for the protocols that cannot carry one, and what OpenPubkey needs of a provider -- judged by the openpubkey library itself."
 [[params.repos]]
   name = "ldap"
   kind = "protocol"
@@ -137,7 +134,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "99.7%"
-  blurb = "The LDAP protocol that `authnd` runs, and RFC 4512 schemas with DIT content rules, name forms and structure rules, enforced. It has the wire, the filter, the scope, the root DSE, paged results and the read entry controls. One filter tree feeds matching, the string form and the bytes, so the three cannot drift apart and answer a BROADER question than the one asked -- which is what a directory's disclosure bugs are made of. Written from RFC 4511/4512/4513/4514/4515/2696/4527 and judged by OpenLDAP's own ldapsearch, which reads back the supportedControl and supportedFeatures it publishes. SASL binds are carried mechanism-agnostically, so OAUTHBEARER (RFC 7628) is authnd's, not this package's."
 [[params.repos]]
   name = "authnd"
   kind = "server"
@@ -145,7 +141,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = false
   cov = "≥88%"
-  blurb = "An LDAP server for people who are somewhere else -- a SQL database, a configuration file, another directory -- because almost everything speaks LDAP. The second factor goes on the end of the password, which is the only field a simple bind has. With a `kerberos` block it is a KDC as well, for the same people; `authnd check` names the ones a realm could never issue a ticket to. A site's own schema may carry DIT content rules, name forms and DIT structure rules: a tree they forbid refuses to start, and an entry they forbid is left out and said."
 
 # --- the service side: a client proving itself to a service you run -----------
 [[params.repos]]
@@ -155,7 +150,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥90%"
-  blurb = "The accepting half of Kerberos: an AP-REQ verified against a keytab and answered with the AP-REP `gokrb5` refuses to build -- without which a GSS-API client asking for mutual authentication completes no context at all. Signs and seals messages too, so `sec=krb5`, `sec=krb5i` and `sec=krb5p`. It issues nothing; that is kdc."
 
 [[params.repos]]
   name = "kdc"
@@ -164,7 +158,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥80%"
-  blurb = "The issuing half: AS-REQ and TGS-REQ over UDP and TCP, backed by the same people authnd already publishes. Judged by MIT's own kinit and kvno, with no MIT KDC involved. Only a source holding the PASSWORD can back a realm -- a KDC decrypts the pre-authentication, and a verifier answers a yes, not a key. A client that lost its reply over UDP and sends the same bytes again gets the reply it already had (MIT's lookaside, ported), never KRB_AP_ERR_REPEAT; and a directory that cannot be read is KDC_ERR_SVC_UNAVAILABLE, never a wrong password."
 
 # --- revocation: taking back what was issued, on every server ----------------
 [[params.repos]]
@@ -174,7 +167,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "OpenSSH key revocation lists in Go: parse, build and check the binary format sshd loads through `RevokedKeys` and `ssh-keygen -k` writes, which `golang.org/x/crypto/ssh` does not support. Judged by OpenSSH's own ssh-keygen, which writes the same bytes for the same revocations."
 [[params.repos]]
   name = "revocation"
   kind = "server"
@@ -182,7 +174,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥93%"
-  blurb = "Distributing revocation lists, SSH KRLs and X.509 CRLs, from the authority that writes them to every server that must refuse what they list, without trusting anything in between and without ever mistaking a stale list for a current one. `authn-revokd` fetches, verifies, keeps state across restarts, fails closed for sshd when a list lapses, and mirrors to other agents."
 [[params.repos]]
   name = "servercert"
   kind = "server"
@@ -190,7 +181,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "Where a daemon's TLS server certificate comes from: a certificate and key on disk, re-read when they change, or an ACME CA through autocert, External Account Binding included."
 
 
 # --- a VPN on the same identity ---------------------------------------------
@@ -201,7 +191,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "WireGuard public keys for the people a go-authn provider knows: what a key is -- one canonical spelling, never a point of low order -- and the signed list of the keys people registered, which a gateway pulls with its own credentials and never accepts older than one it has seen. Judged by wg(8) itself."
 
 # --- SSH for the EuroHPC federation ------------------------------------------
 [[params.repos]]
@@ -211,7 +200,6 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
-  blurb = "SSH user certificates for a federation: the domain grant of the GÉANT/EuroHPC SSH CA profile, encoded byte for byte as its specification writes it, and sshcert-authorize, the site's AuthorizedPrincipalsCommand -- which, unlike GÉANT's own tool, refuses a certificate that carries no grant. Judged by ssh-keygen, a real sshd and GÉANT's code."
 
 # The .road section, driven the way the reference drives its phases: name,
 # status (ready | active), blurb. The template shows the first sentence.

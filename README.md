@@ -6,8 +6,11 @@ and deployed by GitHub Actions.
 The layout is the `go-*` family template: `layouts/partials/styles.html` for
 the whole design system, `layouts/partials/theme-toggle.html` for the three-way
 theme toggle (system / light / dark, defaulting to system), and a
-`layouts/index.html` whose grid of repo cards is drawn from `[[params.repos]]`
-in `hugo.toml`.
+`layouts/index.html` on the reference's skeleton (#16). From `[[params.repos]]`
+in `hugo.toml` it renders the list of repository links and the counts; the
+road section is drawn from `[[params.phases]]`, each card showing the first
+sentence of its `blurb`, cut at 140 characters. There is no card per
+repository, so what each repository is belongs in its own README.
 
 That stylesheet is **byte-identical** to the copies `go-fileshare`, `go-pkgx`
 and `go-pdfkit` carry, and its colours come from `[params.brand]` — whose every
@@ -16,16 +19,8 @@ and renders what it has always rendered. That property is checked rather than
 claimed: build `go-pkgx`'s stylesheet with its `[params.brand]` commented out
 and the emitted `<style>` block is identical to this one's.
 
-Three per-repo flags in `hugo.toml` exist so the page never asserts something
-it has not checked:
-
-- `ci` — the CI badge renders only where a workflow actually exists, so the page
-  never shows an empty "no status" badge.
-- `godoc` — the card title links to pkg.go.dev only where a module is
-  *published*; a command has no such page, and neither has a module that has not
-  been released yet, so those cards link to the repository instead. The
-  repository link is on every card either way, under the version.
-- `cov` — what CI *enforces*, not what somebody measured on a laptop: an exact
-  `100%` where the gate refuses anything less, and the recorded floor (`≥85%`)
-  otherwise. The standard is 100% for every repo; not all of them meet it, and
-  one number across all the cards was false the moment a command joined the org.
+The per-repo fields are described at the top of `hugo.toml`, each saying
+whether the page renders it. Only `name` and `cov` are: `cov` is what CI
+*enforces*, not what somebody measured on a laptop, and the stats line names
+every repository whose gate is exactly `100%`. `ci`, `godoc`, `kind` and `type`
+are kept as facts about each repository and are not shown.
