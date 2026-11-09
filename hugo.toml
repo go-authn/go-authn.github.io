@@ -246,6 +246,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   status = "ready"
   blurb = "`bridge` issues, per client, certificates in the profile of the EuroHPC Federation Platform's SSH CA: one principal from a chosen claim (`voperson_id` for the MyAccessID CUID), the permit-* a shell needs, `source-address`, a short validity, and the domain grant naming the hosting entity's hosts, encoded by `sshcert`. A site trusts the key from `/ssh/config` as EFP documents, and go-fileshare refuses a certificate not granted to it. Unlike GÉANT's tool, ours fail closed when the grant is missing, and the bridge keeps a KRL, which EFP documents none of."
 [[params.phases]]
+  name = "A certificate for a server nobody can reach"
+  status = "ready"
+  blurb = "`servercert` proves a name with dns-01 (RFC 8555 §8.4), a TXT record published through a two-method provider, so a server on a private LAN address gets a publicly trusted certificate, wildcards included, with no inbound port. `rfc2136` is the provider for a name server that takes TSIG-signed dynamic updates (RFC 2136, RFC 8945); its credentials are read from a 0600 file, never a command line. Judged by pebble, Let's Encrypt's own test CA, including a wrong TXT record that must be refused."
+[[params.phases]]
   name = "Writes through the LDAP surface"
   status = "active"
   blurb = "A person can change their own password in `authnd`, with the current one (RFC 3062, or a modify of their own `userPassword`), and nothing else is written: add, delete and modifyDN are deliberately not wired, and the obstacle is now policy rather than shape. `go-authn/ldap` carries a modify as an ORDERED list (RFC 4511 4.6), so `delete member; add member` and `add member; delete member` are no longer the same request; and it answers the read entry controls (RFC 4527), so a write can report the entry before and after -- which a client changing a group membership needs in order to know what it actually wrote."
