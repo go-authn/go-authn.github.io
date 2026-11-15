@@ -21,10 +21,9 @@
   <div class="hero"><div class="wrap">
     <div>
       <h1 class="head">Two questions,<br><span class="accent">and they are not the same.</span></h1>
-      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. Pure Go, <code>CGO_ENABLED=0</code>, and it builds for every one of the 47 targets the Go toolchain lists. BSD-3-Clause.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="https://go-authn.github.io/docs/">{{ partial "icons/book.html" . }}Read the documentation →</a>
-      </div>
+      <p class="sub"><b>Is this person here, now?</b> is not <b>who is this person, and what would prove them?</b> go-authn answers both — the factors that prove presence, the directory that carries what <i>proves</i> each person rather than a password field, and both halves of Kerberos. {{ if partial "mantra-on.html" . }}Go{{ else }}Pure Go{{ end }}, <code>{{ if not (partial "mantra-on.html" $) }}CGO_ENABLED=0{{ end }}</code>, and it builds for every one of the 47 targets the Go toolchain lists. {{ if not (partial "mantra-on.html" $) }}BSD-3-Clause{{ end }}.</p>
+      {{/* [[params.cta]] in hugo.toml: the kit renders the row */}}
+      {{ partial "cta.html" . }}
       <div class="trust"><span><b>{{ len .Site.Params.repos }}</b> repositories</span><span><b>5</b> protocols from one directory</span><span><b>47/47</b> Go targets, CGO=0</span></div>
     </div>
     <div class="term">
@@ -169,6 +168,6 @@ sambaNTPassword is not published, so nothing here can authenticate an SMB sessio
     </div>
   </div></section>
 
-  <footer><div class="wrap"><span>© the go-authn authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · no frameworks</span></div></footer>
+  <footer><div class="wrap"><span>© the go-authn authors{{ if not (partial "mantra-on.html" $) }} · BSD-3-Clause{{ end }}</span><span>{{ if not (partial "mantra-on.html" $) }}Pure Go · {{ end }}{{ if not (partial "mantra-on.html" $) }}CGO_ENABLED=0 · {{ end }}no frameworks</span></div></footer>
 </body>
 </html>
