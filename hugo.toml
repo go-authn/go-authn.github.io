@@ -265,7 +265,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "Secrets from a reference"
   status = "ready"
-  blurb = "`secretsource` resolves a PIN, a password or a recovery code from a reference (`file:`, `keychain:` on macOS, `secretservice:` for GNOME Keyring, KWallet or KeePassXC on Linux, `keepassxc:` through KeePassXC's browser integration) instead of a plaintext file. No scheme runs a command. `fido --pin-from` and `theca --pin-from` read their secrets this way."
+  blurb = "`secretsource` resolves a PIN, a password or a recovery code from a reference (`file:`, `keychain:` on macOS, `secretservice:` for GNOME Keyring, KWallet or KeePassXC on Linux, `keepassxc:` through KeePassXC's browser integration) instead of a plaintext file. No scheme runs a command. `secretsource store` writes one into those managers, and `fido --pin-from` and `theca --pin-from` read their secrets this way."
 
 # The hero's buttons, rendered by landingkit's cta.html in the kit's order.
 [[params.cta]]
