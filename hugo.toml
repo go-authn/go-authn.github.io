@@ -166,6 +166,12 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "≥80%"
+[[params.repos]]
+  name = "kdcd"
+  kind = "server"
+  type = "tool"
+  ci = true
+  godoc = false
 
 # --- revocation: taking back what was issued, on every server ----------------
 [[params.repos]]
@@ -225,6 +231,10 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "Kerberos, both halves"
   status = "ready"
   blurb = "`kdc` issues AS-REQ and TGS-REQ from that same directory, judged by MIT's own kinit. `krb5` accepts an AP-REQ and answers with the AP-REP gokrb5 will not build, then signs and seals for sec=krb5, krb5i and krb5p."
+[[params.phases]]
+  name = "A KDC you can run"
+  status = "ready"
+  blurb = "`kdcd` runs `kdc` as a daemon on UDP and TCP, on the loopback by default, configured in HCL. Its keys come from a keytab file that must not be readable by group or other, and `kdcd check` validates the configuration. An optional mutual-TLS mint listener gives a TGT to a listed caller -- a passkey login at `bridge` -- for people who have no password."
 [[params.phases]]
   name = "The platform's own factors"
   status = "ready"
