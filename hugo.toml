@@ -173,6 +173,15 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = false
 
+# --- signatures: the container a PDF, a UEFI variable or a mail is signed in --
+[[params.repos]]
+  name = "cms"
+  kind = "protocol"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "100%"
+
 # --- revocation: taking back what was issued, on every server ----------------
 [[params.repos]]
   name = "krl"
