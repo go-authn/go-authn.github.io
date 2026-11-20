@@ -255,7 +255,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "A federation behind OpenID Connect"
   status = "ready"
-  blurb = "`saml` is the service provider RENATER and eduGAIN talk to, `bridge` the OpenID Connect provider in front of it, so that go-fileshare and anything else that speaks OIDC reaches every university in the federation. A token over WebDAV, a certificate over SFTP -- the provider's own or an opkssh one -- and an application password for SMB and S3, which have nowhere to put either."
+  blurb = "`saml` is the service provider RENATER and eduGAIN talk to, `bridge` the OpenID Connect provider in front of it, so that go-fileshare and anything else that speaks OIDC reaches every university in the federation. A token over WebDAV, a certificate over SFTP -- the provider's own or an opkssh one -- a Kerberos ticket for SMB, temporary credentials from an STS for S3. No password of any kind: since v0.30.0 the provider issues none."
 [[params.phases]]
   name = "Provisioning from the identity provider"
   status = "ready"
