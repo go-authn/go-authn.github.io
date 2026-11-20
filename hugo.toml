@@ -234,7 +234,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "A KDC you can run"
   status = "ready"
-  blurb = "`kdcd` runs `kdc` as a daemon on UDP and TCP, on the loopback by default, configured in HCL. Its keys come from a keytab file that must not be readable by group or other, and `kdcd check` validates the configuration. An optional mutual-TLS mint listener gives a TGT to a listed caller -- a passkey login at `bridge` -- for people who have no password."
+  blurb = "`kdcd` has no password path: an AS-REQ for a person is refused by design. A TGT comes only through the mutual-TLS mint listener, after a passkey login at `bridge`; the directories only say who exists. It runs `kdc` on UDP and TCP, on the loopback by default, configured in HCL, with keys from a keytab file that must not be readable by group or other, and `kdcd check` validates the configuration."
 [[params.phases]]
   name = "The platform's own factors"
   status = "ready"
