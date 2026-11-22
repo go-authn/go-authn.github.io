@@ -181,6 +181,13 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
+[[params.repos]]
+  name = "pkcs12"
+  kind = "protocol"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "100%"
 
 # --- revocation: taking back what was issued, on every server ----------------
 [[params.repos]]
