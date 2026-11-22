@@ -150,6 +150,14 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   godoc = true
   cov = "100%"
 
+[[params.repos]]
+  name = "harden"
+  kind = "factor"
+  type = "lib"
+  ci = true
+  godoc = true
+  cov = "100%"
+
 # --- the service side: a client proving itself to a service you run -----------
 [[params.repos]]
   name = "krb5"
