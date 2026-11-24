@@ -218,6 +218,12 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   ci = true
   godoc = true
   cov = "100%"
+[[params.repos]]
+  name = "sdcreds"
+  kind = "factor"
+  type = "tool"
+  ci = true
+  godoc = false
 
 
 # --- a VPN on the same identity ---------------------------------------------
@@ -299,6 +305,11 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   name = "Secrets from a reference"
   status = "ready"
   blurb = "`secretsource` reads a PIN from KeePassXC, Keychain, a Secret Service or a systemd credential; `file:` refuses symlinks; `secretflag` adds `--<name>-from`. Since v0.9.0 `file:` refuses a symbolic link or a file owned by another account; `secretsource/secretflag` (v0.10.0) replaces a secret flag, visible in `ps`, by `--<name>-from <ref>`. No plaintext file is needed: `secretsource store` writes it. It resolves a PIN, a password or a recovery code from a reference (`file:`, `keychain:` on macOS, `secretservice:` for GNOME Keyring, KWallet or KeePassXC on Linux, `keepassxc:` through KeePassXC's browser integration, `systemd-creds:` for a systemd credential on Linux, since v0.8.0). No scheme runs a command. `fido --pin-from` and `theca --pin-from` read their secrets this way."
+
+[[params.phases]]
+  name = "Systemd credentials without systemd"
+  status = "ready"
+  blurb = "`sdcreds` (v0.1.0) reads and writes the systemd credential format (`systemd-creds encrypt` / `decrypt`) from Go, with a command line and a helper that gives an s6-supervised service the `$CREDENTIALS_DIRECTORY` that `LoadCredentialEncrypted=` gives a systemd unit. Install: `go install github.com/go-authn/sdcreds/cmd/sdcreds@latest`. Supported keys are null, host and host-scoped; TPM2 and public-key credentials are recognised and refused with `*UnsupportedModeError`, nothing is guessed. Both directions are tested against the real `systemd-creds` 262.2. `sdcreds s6-run` decrypts every credential before mounting a per-service `tmpfs`, writes the plaintext 0400 for the service user and starts the service in a child that drops privileges; `sdcreds s6-finish` unmounts it. Linux only for `s6-run`."
 
 [[params.phases]]
   name = "Shared hardening"
