@@ -223,7 +223,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
   kind = "factor"
   type = "tool"
   ci = true
-  godoc = false
+  godoc = true
 
 
 # --- a VPN on the same identity ---------------------------------------------
