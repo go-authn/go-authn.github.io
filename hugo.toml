@@ -259,7 +259,7 @@ disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
 [[params.phases]]
   name = "Kerberos, both halves"
   status = "ready"
-  blurb = "`kdc` issues AS-REQ and TGS-REQ from that same directory, judged by MIT's own kinit. Since v0.12.0 it can put a PAC in the service tickets of services you name (`Config.PAC`), from the directory's uidNumber and gidNumber, and a Samba member server accepted it; a reply too big for UDP is answered with `KRB_ERR_RESPONSE_TOO_BIG` so the client retries over TCP. `krb5` accepts an AP-REQ and answers with the AP-REP gokrb5 will not build, then signs and seals for sec=krb5, krb5i and krb5p."
+  blurb = "`kdc` issues AS-REQ and TGS-REQ from that same directory, and since v0.12.0 puts a PAC a Samba member server accepts in the tickets of services you name. MIT's own kinit judges it. The PAC (`Config.PAC`) comes from the directory's uidNumber and gidNumber; a reply too big for UDP is answered with `KRB_ERR_RESPONSE_TOO_BIG` so the client retries over TCP. `krb5` accepts an AP-REQ and answers with the AP-REP gokrb5 will not build, then signs and seals for sec=krb5, krb5i and krb5p."
 [[params.phases]]
   name = "A KDC you can run"
   status = "ready"
